@@ -80,15 +80,7 @@ export async function loadAllHouses() {
   return data;
 }
 
-export async function approveHouse(houseId) {
-  const { error } = await supabase
-    .from('profiles')
-    .update({ approved: true })
-    .eq('id', houseId);
-  if (error) throw error;
-}
-
-export async function rejectHouse(houseId) {
+export async function deleteHouse(houseId) {
   const { error } = await supabase
     .from('profiles')
     .delete()

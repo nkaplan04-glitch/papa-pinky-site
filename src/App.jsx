@@ -5,7 +5,6 @@ import Home from './pages/Home';
 import About from './pages/About';
 import Payment from './pages/Payment';
 import Login from './pages/Login';
-import Register from './pages/Register';
 import Menu from './pages/Menu';
 import Contact from './pages/Contact';
 import HouseDashboard from './pages/HouseDashboard';
@@ -23,7 +22,7 @@ export default function App() {
           <Route path="/contact" element={<Contact />} />
           <Route path="/payment" element={<Payment />} />
           <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} />
+
           <Route
             path="/house/:houseId"
             element={

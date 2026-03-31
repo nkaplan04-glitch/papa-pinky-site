@@ -1,7 +1,15 @@
 import { supabase } from './supabase';
+import { createClient } from '@supabase/supabase-js';
 
-export async function register({ email, password, houseName, headcount }) {
-  const { data, error } = await supabase.auth.signUp({
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+
+export async function createHouseAccount({ email, password, houseName, headcount }) {
+  const tempClient = createClient(supabaseUrl, supabaseAnonKey, {
+    auth: { persistSession: false },
+  });
+
+  const { data, error } = await tempClient.auth.signUp({
     email,
     password,
     options: {
@@ -13,6 +21,15 @@ export async function register({ email, password, houseName, headcount }) {
     },
   });
   if (error) throw error;
+
+  if (data.user) {
+    const { error: approveError } = await supabase
+      .from('profiles')
+      .update({ approved: true })
+      .eq('id', data.user.id);
+    if (approveError) throw approveError;
+  }
+
   return data;
 }
 

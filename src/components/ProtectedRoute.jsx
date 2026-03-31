@@ -14,7 +14,7 @@ export default function ProtectedRoute({ children, allowedRole }) {
     return (
       <div className="page">
         <div className="locked-message">
-          Your house has not been approved yet. Please wait for the chef to review your registration.
+          Your account is not active yet. Please contact Chef Roger.
         </div>
       </div>
     );

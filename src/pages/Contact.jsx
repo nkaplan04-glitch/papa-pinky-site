@@ -27,9 +27,9 @@ export default function Contact() {
         <h2>Getting Started</h2>
         <p>If your house is interested in signing up for daily meal service:</p>
         <ol className="contact-steps">
-          <li>Send us an email with your house name and estimated headcount</li>
+          <li>Send us an email or give us a call with your house name and estimated headcount</li>
           <li>We'll set up a time to discuss the menu and logistics</li>
-          <li>Once confirmed, register your house on the site to start ordering</li>
+          <li>Once confirmed, Chef Roger will create your account and send you your login</li>
         </ol>
       </div>
     </div>

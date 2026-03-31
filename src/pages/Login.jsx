@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { login, getCurrentUser } from '../utils/auth';
 
 export default function Login() {
@@ -29,7 +29,7 @@ export default function Login() {
       } else if (user.approved) {
         navigate(`/house/${user.id}`);
       } else {
-        setError('Your house has not been approved yet. Please wait for the chef to approve your registration.');
+        setError('Your account is not active yet. Please contact Chef Roger.');
         setLoading(false);
         return;
       }
@@ -44,7 +44,7 @@ export default function Login() {
     <div className="page login-page">
       <div className="login-card">
         <h1>Log In</h1>
-        <p className="login-helper">Each house has its own login.</p>
+        <p className="login-helper">Log in with the credentials provided by Chef Roger.</p>
         <form onSubmit={handleSubmit}>
           <div className="form-group">
             <label htmlFor="email">Email</label>
@@ -74,7 +74,7 @@ export default function Login() {
           </button>
         </form>
         <p className="register-link">
-          New house? <Link to="/register">Register here</Link>
+          Need an account? Contact Chef Roger to get set up.
         </p>
       </div>
     </div>
