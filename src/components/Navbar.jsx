@@ -20,6 +20,7 @@ export default function Navbar() {
       <div className="navbar-links">
         <Link to="/">Home</Link>
         <Link to="/about">About</Link>
+        <Link to="/menu">Menu</Link>
         <Link to="/payment">Payment</Link>
         {!user && <Link to="/login">Login</Link>}
         {user?.role === 'house' && (

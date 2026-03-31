@@ -11,6 +11,9 @@ export const defaultSubmissions = {
     ],
     lunch: 'Chicken fried rice with peas, carrots and eggs',
     dinner: 'Chicken Parmesan over pasta',
+    breakfastTime: '9:00 AM',
+    lunchTime: '12:30 PM',
+    dinnerTime: '6:30 PM',
     submittedAt: now,
   },
   pike: {
@@ -20,6 +23,9 @@ export const defaultSubmissions = {
     ],
     lunch: 'Double smash burger with onions, lettuce, tomatoes, pickles and ketchup on brioche',
     dinner: 'Chicken tikka masala with homemade naan bread served with rice and fresh cilantro',
+    breakfastTime: '8:30 AM',
+    lunchTime: '12:00 PM',
+    dinnerTime: '6:00 PM',
     submittedAt: now,
   },
   // DTD and AEPi intentionally left empty so chef dashboard shows "not submitted" states

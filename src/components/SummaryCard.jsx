@@ -12,7 +12,7 @@ export default function SummaryCard({ house, submission }) {
       {hasSubmitted ? (
         <div className="summary-card-body">
           <div className="summary-meal">
-            <strong>Breakfast</strong>
+            <strong>Breakfast{submission.breakfastTime ? ` — ${submission.breakfastTime}` : ''}</strong>
             <ul>
               {submission.breakfast.map((item) => (
                 <li key={item}>{item}</li>
@@ -20,11 +20,11 @@ export default function SummaryCard({ house, submission }) {
             </ul>
           </div>
           <div className="summary-meal">
-            <strong>Lunch</strong>
+            <strong>Lunch{submission.lunchTime ? ` — ${submission.lunchTime}` : ''}</strong>
             <p>{submission.lunch}</p>
           </div>
           <div className="summary-meal">
-            <strong>Dinner</strong>
+            <strong>Dinner{submission.dinnerTime ? ` — ${submission.dinnerTime}` : ''}</strong>
             <p>{submission.dinner}</p>
           </div>
           {submission.submittedAt && (

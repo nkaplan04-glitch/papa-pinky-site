@@ -1,3 +1,5 @@
+import { TAG_LEGEND } from '../data/menuOptions';
+
 export default function SelectionSection({
   title,
   note,
@@ -9,18 +11,26 @@ export default function SelectionSection({
 }) {
   const isMulti = maxSelections > 1;
 
-  function handleToggle(option) {
+  function getName(option) {
+    return typeof option === 'string' ? option : option.name;
+  }
+
+  function getTags(option) {
+    return typeof option === 'string' ? [] : (option.tags || []);
+  }
+
+  function handleToggle(optionName) {
     if (disabled) return;
 
     if (isMulti) {
-      const alreadySelected = selected.includes(option);
+      const alreadySelected = selected.includes(optionName);
       if (alreadySelected) {
-        onChange(selected.filter((s) => s !== option));
+        onChange(selected.filter((s) => s !== optionName));
       } else if (selected.length < maxSelections) {
-        onChange([...selected, option]);
+        onChange([...selected, optionName]);
       }
     } else {
-      onChange(option === selected ? null : option);
+      onChange(optionName === selected ? null : optionName);
     }
   }
 
@@ -41,18 +51,31 @@ export default function SelectionSection({
       {note && <p className="selection-note">{note}</p>}
       <div className="selection-options">
         {options.map((option) => {
-          const isActive = currentSelected.includes(option);
+          const name = getName(option);
+          const tags = getTags(option);
+          const isActive = currentSelected.includes(name);
           const atMax = isMulti && selected.length >= maxSelections && !isActive;
           return (
             <button
-              key={option}
+              key={name}
               className={`selection-option ${isActive ? 'active' : ''} ${atMax ? 'at-max' : ''}`}
-              onClick={() => handleToggle(option)}
+              onClick={() => handleToggle(name)}
               disabled={disabled}
               type="button"
             >
               <span className="option-check">{isActive ? '✓' : ''}</span>
-              <span className="option-text">{option}</span>
+              <span className="option-text">
+                {name}
+                {tags.length > 0 && (
+                  <span className="option-tags">
+                    {tags.map((tag) => (
+                      <span key={tag} className={`tag tag-${tag.toLowerCase()}`} title={TAG_LEGEND[tag]?.label}>
+                        {tag}
+                      </span>
+                    ))}
+                  </span>
+                )}
+              </span>
             </button>
           );
         })}

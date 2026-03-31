@@ -9,6 +9,12 @@ import { defaultSubmissions } from '../data/mockSubmissions';
 import StatusBanner from '../components/StatusBanner';
 import SelectionSection from '../components/SelectionSection';
 
+const TIME_OPTIONS = {
+  breakfast: ['7:00 AM', '7:30 AM', '8:00 AM', '8:30 AM', '9:00 AM', '9:30 AM', '10:00 AM', '10:30 AM', '11:00 AM'],
+  lunch: ['11:00 AM', '11:30 AM', '12:00 PM', '12:30 PM', '1:00 PM', '1:30 PM', '2:00 PM'],
+  dinner: ['5:00 PM', '5:30 PM', '6:00 PM', '6:30 PM', '7:00 PM', '7:30 PM', '8:00 PM', '8:30 PM'],
+};
+
 export default function HouseDashboard() {
   const { houseId } = useParams();
   const user = getCurrentUser();
@@ -17,10 +23,12 @@ export default function HouseDashboard() {
   const [breakfast, setBreakfast] = useState([]);
   const [lunch, setLunch] = useState(null);
   const [dinner, setDinner] = useState(null);
+  const [breakfastTime, setBreakfastTime] = useState('');
+  const [lunchTime, setLunchTime] = useState('');
+  const [dinnerTime, setDinnerTime] = useState('');
   const [errors, setErrors] = useState([]);
   const [saved, setSaved] = useState(false);
 
-  // Load existing submission on mount
   useEffect(() => {
     const stored = loadSubmissions();
     const all = stored || defaultSubmissions;
@@ -29,12 +37,15 @@ export default function HouseDashboard() {
       setBreakfast(existing.breakfast || []);
       setLunch(existing.lunch || null);
       setDinner(existing.dinner || null);
+      setBreakfastTime(existing.breakfastTime || '');
+      setLunchTime(existing.lunchTime || '');
+      setDinnerTime(existing.dinnerTime || '');
       setSaved(true);
     }
   }, [houseId]);
 
   function handleSubmit() {
-    const validationErrors = validateSelections(breakfast, lunch, dinner);
+    const validationErrors = validateSelections(breakfast, lunch, dinner, breakfastTime, lunchTime, dinnerTime);
     if (validationErrors.length > 0) {
       setErrors(validationErrors);
       setSaved(false);
@@ -48,6 +59,9 @@ export default function HouseDashboard() {
       breakfast,
       lunch,
       dinner,
+      breakfastTime,
+      lunchTime,
+      dinnerTime,
       submittedAt: new Date().toISOString(),
     };
     saveSubmissions(stored);
@@ -87,6 +101,20 @@ export default function HouseDashboard() {
         maxSelections={2}
         disabled={locked}
       />
+      <div className="delivery-time">
+        <label htmlFor="breakfast-time">Breakfast delivery time</label>
+        <select
+          id="breakfast-time"
+          value={breakfastTime}
+          onChange={(e) => setBreakfastTime(e.target.value)}
+          disabled={locked}
+        >
+          <option value="">Select a time</option>
+          {TIME_OPTIONS.breakfast.map((t) => (
+            <option key={t} value={t}>{t}</option>
+          ))}
+        </select>
+      </div>
 
       <SelectionSection
         title="Lunch"
@@ -96,6 +124,20 @@ export default function HouseDashboard() {
         maxSelections={1}
         disabled={locked}
       />
+      <div className="delivery-time">
+        <label htmlFor="lunch-time">Lunch delivery time</label>
+        <select
+          id="lunch-time"
+          value={lunchTime}
+          onChange={(e) => setLunchTime(e.target.value)}
+          disabled={locked}
+        >
+          <option value="">Select a time</option>
+          {TIME_OPTIONS.lunch.map((t) => (
+            <option key={t} value={t}>{t}</option>
+          ))}
+        </select>
+      </div>
 
       <SelectionSection
         title="Dinner"
@@ -105,6 +147,20 @@ export default function HouseDashboard() {
         maxSelections={1}
         disabled={locked}
       />
+      <div className="delivery-time">
+        <label htmlFor="dinner-time">Dinner delivery time</label>
+        <select
+          id="dinner-time"
+          value={dinnerTime}
+          onChange={(e) => setDinnerTime(e.target.value)}
+          disabled={locked}
+        >
+          <option value="">Select a time</option>
+          {TIME_OPTIONS.dinner.map((t) => (
+            <option key={t} value={t}>{t}</option>
+          ))}
+        </select>
+      </div>
 
       {errors.length > 0 && (
         <div className="validation-errors">

@@ -1,4 +1,4 @@
-export function validateSelections(breakfast, lunch, dinner) {
+export function validateSelections(breakfast, lunch, dinner, breakfastTime, lunchTime, dinnerTime) {
   const errors = [];
 
   if (!breakfast || breakfast.length !== 2) {
@@ -9,6 +9,15 @@ export function validateSelections(breakfast, lunch, dinner) {
   }
   if (!dinner) {
     errors.push('Please select 1 dinner item.');
+  }
+  if (!breakfastTime) {
+    errors.push('Please select a delivery time for breakfast.');
+  }
+  if (!lunchTime) {
+    errors.push('Please select a delivery time for lunch.');
+  }
+  if (!dinnerTime) {
+    errors.push('Please select a delivery time for dinner.');
   }
 
   return errors;

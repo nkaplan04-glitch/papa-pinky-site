@@ -5,6 +5,7 @@ import Home from './pages/Home';
 import About from './pages/About';
 import Payment from './pages/Payment';
 import Login from './pages/Login';
+import Menu from './pages/Menu';
 import HouseDashboard from './pages/HouseDashboard';
 import ChefDashboard from './pages/ChefDashboard';
 
@@ -23,7 +24,8 @@ export default function App() {
       <Navbar />
       <main>
         <Routes>
-          <Route path="/" element={<Home />} />
+          <Route path="/" element={<div className="home-bg"><Home /></div>} />
+          <Route path="/menu" element={<Menu />} />
           <Route path="/about" element={<About />} />
           <Route path="/payment" element={<Payment />} />
           <Route path="/login" element={<Login />} />
