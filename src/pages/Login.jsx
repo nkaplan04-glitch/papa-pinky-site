@@ -1,38 +1,42 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { login, getCurrentUser } from '../utils/auth';
 
 export default function Login() {
   const navigate = useNavigate();
-  const [username, setUsername] = useState('');
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
 
-  // Redirect if already logged in
-  const existing = getCurrentUser();
-  if (existing) {
-    if (existing.role === 'chef') {
-      navigate('/chef', { replace: true });
-    } else {
-      navigate(`/house/${existing.houseId}`, { replace: true });
-    }
-    return null;
-  }
-
-  function handleSubmit(e) {
+  async function handleSubmit(e) {
     e.preventDefault();
     setError('');
+    setLoading(true);
 
-    const session = login(username, password);
-    if (!session) {
-      setError('Invalid username or password.');
-      return;
-    }
+    try {
+      await login(email.trim(), password);
+      const user = await getCurrentUser();
 
-    if (session.role === 'chef') {
-      navigate('/chef');
-    } else {
-      navigate(`/house/${session.houseId}`);
+      if (!user) {
+        setError('Login failed. Please try again.');
+        setLoading(false);
+        return;
+      }
+
+      if (user.role === 'chef') {
+        navigate('/chef');
+      } else if (user.approved) {
+        navigate(`/house/${user.id}`);
+      } else {
+        setError('Your house has not been approved yet. Please wait for the chef to approve your registration.');
+        setLoading(false);
+        return;
+      }
+    } catch (err) {
+      setError(err.message || 'Invalid email or password.');
+    } finally {
+      setLoading(false);
     }
   }
 
@@ -43,13 +47,13 @@ export default function Login() {
         <p className="login-helper">Each house has its own login.</p>
         <form onSubmit={handleSubmit}>
           <div className="form-group">
-            <label htmlFor="username">Username</label>
+            <label htmlFor="email">Email</label>
             <input
-              id="username"
-              type="text"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
-              autoComplete="username"
+              id="email"
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              autoComplete="email"
               required
             />
           </div>
@@ -65,8 +69,13 @@ export default function Login() {
             />
           </div>
           {error && <p className="form-error">{error}</p>}
-          <button type="submit" className="btn btn-primary btn-full">Log In</button>
+          <button type="submit" className="btn btn-primary btn-full" disabled={loading}>
+            {loading ? 'Logging in...' : 'Log In'}
+          </button>
         </form>
+        <p className="register-link">
+          New house? <Link to="/register">Register here</Link>
+        </p>
       </div>
     </div>
   );

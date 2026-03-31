@@ -1,10 +1,19 @@
-export default function SummaryCard({ house, submission }) {
+export default function SummaryCard({ house, submission, headcount }) {
   const hasSubmitted = !!submission;
 
   return (
     <div className={`summary-card ${hasSubmitted ? 'submitted' : 'not-submitted'}`}>
       <div className="summary-card-header">
-        <h3>{house.name}</h3>
+        <div>
+          <h3>{house.name}</h3>
+          {headcount > 0 && (
+            <span className="summary-headcount">
+              {hasSubmitted && submission.dailyHeadcount
+                ? `${submission.dailyHeadcount} eating today`
+                : `${headcount} on meal plan`}
+            </span>
+          )}
+        </div>
         <span className={`submission-badge ${hasSubmitted ? 'badge-submitted' : 'badge-pending'}`}>
           {hasSubmitted ? 'Submitted' : 'Not Submitted'}
         </span>

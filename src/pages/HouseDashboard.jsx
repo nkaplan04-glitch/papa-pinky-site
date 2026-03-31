@@ -1,11 +1,9 @@
 import { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
-import { getCurrentUser } from '../utils/auth';
-import { loadSubmissions, saveSubmissions } from '../utils/storage';
 import { isOrderingLocked } from '../utils/cutoff';
 import { validateSelections } from '../utils/validation';
 import { breakfastOptions, lunchDinnerOptions, BREAKFAST_NOTE } from '../data/menuOptions';
-import { defaultSubmissions } from '../data/mockSubmissions';
+import { loadSubmission, saveSubmission } from '../utils/storage';
+import { getCurrentUser, updateHeadcount } from '../utils/auth';
 import StatusBanner from '../components/StatusBanner';
 import SelectionSection from '../components/SelectionSection';
 
@@ -16,36 +14,55 @@ const TIME_OPTIONS = {
 };
 
 export default function HouseDashboard() {
-  const { houseId } = useParams();
-  const user = getCurrentUser();
   const locked = isOrderingLocked();
 
+  const [user, setUser] = useState(null);
   const [breakfast, setBreakfast] = useState([]);
   const [lunch, setLunch] = useState(null);
   const [dinner, setDinner] = useState(null);
   const [breakfastTime, setBreakfastTime] = useState('');
   const [lunchTime, setLunchTime] = useState('');
   const [dinnerTime, setDinnerTime] = useState('');
+  const [dailyHeadcount, setDailyHeadcount] = useState('');
   const [errors, setErrors] = useState([]);
   const [saved, setSaved] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const stored = loadSubmissions();
-    const all = stored || defaultSubmissions;
-    const existing = all[houseId];
-    if (existing) {
-      setBreakfast(existing.breakfast || []);
-      setLunch(existing.lunch || null);
-      setDinner(existing.dinner || null);
-      setBreakfastTime(existing.breakfastTime || '');
-      setLunchTime(existing.lunchTime || '');
-      setDinnerTime(existing.dinnerTime || '');
-      setSaved(true);
-    }
-  }, [houseId]);
+    async function load() {
+      try {
+        const currentUser = await getCurrentUser();
+        if (!currentUser) return;
+        setUser(currentUser);
+        setDailyHeadcount(String(currentUser.headcount || ''));
 
-  function handleSubmit() {
+        const existing = await loadSubmission(currentUser.id);
+        if (existing) {
+          setBreakfast(existing.breakfast || []);
+          setLunch(existing.lunch || null);
+          setDinner(existing.dinner || null);
+          setBreakfastTime(existing.breakfast_time || '');
+          setLunchTime(existing.lunch_time || '');
+          setDinnerTime(existing.dinner_time || '');
+          if (existing.daily_headcount) {
+            setDailyHeadcount(String(existing.daily_headcount));
+          }
+          setSaved(true);
+        }
+      } catch (err) {
+        console.error('Failed to load dashboard:', err);
+      } finally {
+        setLoading(false);
+      }
+    }
+    load();
+  }, []);
+
+  async function handleSubmit() {
     const validationErrors = validateSelections(breakfast, lunch, dinner, breakfastTime, lunchTime, dinnerTime);
+    if (!dailyHeadcount || parseInt(dailyHeadcount, 10) < 1) {
+      validationErrors.push('Please enter how many people are eating today.');
+    }
     if (validationErrors.length > 0) {
       setErrors(validationErrors);
       setSaved(false);
@@ -54,18 +71,29 @@ export default function HouseDashboard() {
 
     setErrors([]);
 
-    const stored = loadSubmissions() || { ...defaultSubmissions };
-    stored[houseId] = {
-      breakfast,
-      lunch,
-      dinner,
-      breakfastTime,
-      lunchTime,
-      dinnerTime,
-      submittedAt: new Date().toISOString(),
-    };
-    saveSubmissions(stored);
-    setSaved(true);
+    try {
+      await saveSubmission(user.id, {
+        breakfast,
+        lunch,
+        dinner,
+        breakfastTime,
+        lunchTime,
+        dinnerTime,
+        dailyHeadcount: parseInt(dailyHeadcount, 10),
+      });
+      setSaved(true);
+    } catch (err) {
+      setErrors([err.message || 'Failed to save. Please try again.']);
+    }
+  }
+
+  async function handleHeadcountUpdate() {
+    if (!user) return;
+    try {
+      await updateHeadcount(user.id, parseInt(dailyHeadcount, 10));
+    } catch (err) {
+      console.error('Failed to update headcount:', err);
+    }
   }
 
   const tomorrow = new Date();
@@ -76,15 +104,37 @@ export default function HouseDashboard() {
     day: 'numeric',
   });
 
+  if (loading) {
+    return <div className="page house-dashboard"><p>Loading...</p></div>;
+  }
+
   return (
     <div className="page house-dashboard">
       <div className="dashboard-header">
-        <h1>{user?.houseName || houseId}</h1>
+        <h1>{user?.houseName || 'Dashboard'}</h1>
         <h2>Next Day Meal Selection</h2>
         <p className="dashboard-date">{dateString}</p>
       </div>
 
       <StatusBanner />
+
+      <div className="headcount-section">
+        <label htmlFor="daily-headcount">People eating today</label>
+        <div className="headcount-input-row">
+          <input
+            id="daily-headcount"
+            type="number"
+            min="1"
+            value={dailyHeadcount}
+            onChange={(e) => setDailyHeadcount(e.target.value)}
+            onBlur={handleHeadcountUpdate}
+            disabled={locked}
+          />
+          <span className="headcount-note">
+            Meal plan total: {user?.headcount || 0}
+          </span>
+        </div>
+      </div>
 
       {locked && (
         <div className="locked-message">

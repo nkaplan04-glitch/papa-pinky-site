@@ -1053,6 +1053,242 @@ img {
   padding: 20px 0;
 }
 
+/* ===== REGISTER / LOGIN LINK ===== */
+.register-link {
+  text-align: center;
+  margin-top: 20px;
+  font-size: 14px;
+  color: var(--color-text-muted);
+}
+
+.register-link a {
+  color: var(--color-navy);
+  font-weight: 600;
+}
+
+.register-success {
+  text-align: center;
+  color: var(--color-green);
+  font-size: 16px;
+  line-height: 1.7;
+  margin-top: 12px;
+}
+
+/* ===== HEADCOUNT SECTION ===== */
+.headcount-section {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  padding: 16px 20px;
+  margin-bottom: 28px;
+  box-shadow: var(--shadow-sm);
+}
+
+.headcount-section label {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--color-text);
+  display: block;
+  margin-bottom: 8px;
+}
+
+.headcount-input-row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.headcount-input-row input {
+  width: 100px;
+  padding: 8px 12px;
+  font-size: 16px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  font-family: var(--font);
+  background: #ffffff;
+  color: var(--color-text-bright);
+}
+
+.headcount-input-row input:focus {
+  outline: none;
+  border-color: var(--color-navy);
+  box-shadow: 0 0 0 3px var(--color-navy-light);
+}
+
+.headcount-input-row input:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.headcount-note {
+  font-size: 14px;
+  color: var(--color-text-muted);
+}
+
+/* ===== APPROVAL SECTION ===== */
+.approval-section {
+  margin-bottom: 32px;
+}
+
+.approval-section h2 {
+  font-size: 22px;
+  font-weight: 700;
+  margin-bottom: 16px;
+  color: var(--color-text-bright);
+}
+
+.approval-cards {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.approval-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-left: 4px solid var(--color-warn);
+  border-radius: var(--radius);
+  padding: 14px 20px;
+  box-shadow: var(--shadow-sm);
+}
+
+.approval-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.approval-info strong {
+  font-size: 16px;
+  color: var(--color-text-bright);
+}
+
+.approval-info span {
+  font-size: 14px;
+  color: var(--color-text-muted);
+}
+
+.approval-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.btn-approve {
+  padding: 6px 16px;
+  border: 1px solid var(--color-green-border);
+  background: var(--color-green-light);
+  color: var(--color-green);
+  font-size: 14px;
+  font-weight: 600;
+  border-radius: var(--radius);
+  cursor: pointer;
+  font-family: var(--font);
+  transition: all 0.15s;
+}
+
+.btn-approve:hover {
+  background: var(--color-green);
+  color: #ffffff;
+  border-color: var(--color-green);
+}
+
+.btn-reject {
+  padding: 6px 16px;
+  border: 1px solid var(--color-red-border);
+  background: var(--color-red-light);
+  color: var(--color-red);
+  font-size: 14px;
+  font-weight: 600;
+  border-radius: var(--radius);
+  cursor: pointer;
+  font-family: var(--font);
+  transition: all 0.15s;
+}
+
+.btn-reject:hover {
+  background: var(--color-red);
+  color: #ffffff;
+  border-color: var(--color-red);
+}
+
+/* ===== SUMMARY HEADCOUNT ===== */
+.summary-headcount {
+  font-size: 13px;
+  color: var(--color-text-muted);
+  font-weight: 400;
+}
+
+/* ===== CONTACT PAGE ===== */
+.contact-page h1 {
+  font-size: 36px;
+  font-weight: 700;
+  margin-bottom: 8px;
+  color: var(--color-navy);
+}
+
+.contact-intro {
+  color: var(--color-text-muted);
+  font-size: 16px;
+  margin-bottom: 32px;
+  line-height: 1.7;
+}
+
+.contact-card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: 28px 24px;
+  margin-bottom: 20px;
+  box-shadow: var(--shadow-sm);
+}
+
+.contact-card h2 {
+  font-size: 20px;
+  font-weight: 600;
+  margin-bottom: 12px;
+  color: var(--color-text-bright);
+}
+
+.contact-detail {
+  margin-bottom: 12px;
+}
+
+.contact-detail strong {
+  display: block;
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--color-text-muted);
+  margin-bottom: 4px;
+}
+
+.contact-detail a {
+  font-size: 17px;
+  font-weight: 600;
+  color: var(--color-navy);
+}
+
+.contact-note {
+  font-size: 14px;
+  color: var(--color-text-muted);
+  line-height: 1.6;
+}
+
+.contact-steps {
+  padding-left: 20px;
+  margin-top: 12px;
+}
+
+.contact-steps li {
+  font-size: 15px;
+  color: var(--color-text-muted);
+  padding: 4px 0;
+  line-height: 1.6;
+}
+
 /* ===== RESPONSIVE ===== */
 @media (max-width: 768px) {
   .navbar {
