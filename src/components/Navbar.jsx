@@ -26,7 +26,10 @@ export default function Navbar() {
         <Link to="/payment">Pricing/Payment</Link>
         {!user && <Link to="/login">Login</Link>}
         {user?.role === 'house' && user.approved && (
-          <Link to={`/house/${user.id}`}>Dashboard</Link>
+          <>
+            <Link to={`/house/${user.id}`}>Dashboard</Link>
+            <Link to="/suggestions">Suggestions</Link>
+          </>
         )}
         {user?.role === 'chef' && (
           <Link to="/chef">Dashboard</Link>

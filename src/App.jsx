@@ -7,6 +7,7 @@ import Payment from './pages/Payment';
 import Login from './pages/Login';
 import Menu from './pages/Menu';
 import Contact from './pages/Contact';
+import Suggestions from './pages/Suggestions';
 import HouseDashboard from './pages/HouseDashboard';
 import ChefDashboard from './pages/ChefDashboard';
 
@@ -23,6 +24,14 @@ export default function App() {
           <Route path="/payment" element={<Payment />} />
           <Route path="/login" element={<Login />} />
 
+          <Route
+            path="/suggestions"
+            element={
+              <ProtectedRoute allowedRole="house">
+                <Suggestions />
+              </ProtectedRoute>
+            }
+          />
           <Route
             path="/house/:houseId"
             element={

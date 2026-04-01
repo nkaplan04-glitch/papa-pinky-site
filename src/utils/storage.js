@@ -87,3 +87,99 @@ export async function deleteHouse(houseId) {
     .eq('id', houseId);
   if (error) throw error;
 }
+
+// ===== MENU ITEMS =====
+
+export async function loadMenuItems() {
+  const { data, error } = await supabase
+    .from('menu_items')
+    .select('*')
+    .eq('active', true)
+    .order('created_at', { ascending: true });
+
+  if (error) throw error;
+  return data || [];
+}
+
+export async function loadAllMenuItems() {
+  const { data, error } = await supabase
+    .from('menu_items')
+    .select('*')
+    .order('created_at', { ascending: true });
+
+  if (error) throw error;
+  return data || [];
+}
+
+export async function addMenuItem({ name, category, tags }) {
+  const { data, error } = await supabase
+    .from('menu_items')
+    .insert({ name, category, tags })
+    .select()
+    .single();
+
+  if (error) throw error;
+  return data;
+}
+
+export async function updateMenuItem(id, updates) {
+  const { error } = await supabase
+    .from('menu_items')
+    .update(updates)
+    .eq('id', id);
+  if (error) throw error;
+}
+
+export async function deleteMenuItem(id) {
+  const { error } = await supabase
+    .from('menu_items')
+    .delete()
+    .eq('id', id);
+  if (error) throw error;
+}
+
+// ===== SUGGESTIONS =====
+
+export async function loadSuggestions() {
+  const { data, error } = await supabase
+    .from('suggestions')
+    .select('*, profiles(house_name)')
+    .order('created_at', { ascending: false });
+
+  if (error) throw error;
+  return data || [];
+}
+
+export async function loadHouseSuggestions(houseId) {
+  const { data, error } = await supabase
+    .from('suggestions')
+    .select('*')
+    .eq('house_id', houseId)
+    .order('created_at', { ascending: false });
+
+  if (error) throw error;
+  return data || [];
+}
+
+export async function submitSuggestion({ houseId, suggestionText, category }) {
+  const { data, error } = await supabase
+    .from('suggestions')
+    .insert({
+      house_id: houseId,
+      suggestion_text: suggestionText,
+      category,
+    })
+    .select()
+    .single();
+
+  if (error) throw error;
+  return data;
+}
+
+export async function updateSuggestionStatus(id, status) {
+  const { error } = await supabase
+    .from('suggestions')
+    .update({ status })
+    .eq('id', id);
+  if (error) throw error;
+}

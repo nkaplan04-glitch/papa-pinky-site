@@ -15,7 +15,7 @@ export default function Contact() {
         </div>
         <div className="contact-detail">
           <strong>Email</strong>
-          <a href="mailto:papapinkymealservice@gmail.com">papapinkymealservice@gmail.com</a>
+          <a href="mailto:ursoroger60@gmail.com">ursoroger60@gmail.com</a>
         </div>
         <p className="contact-note">
           Include your house name and any details about your meal plan needs.

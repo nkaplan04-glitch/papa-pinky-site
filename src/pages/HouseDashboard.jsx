@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react';
 import { isOrderingLocked } from '../utils/cutoff';
 import { validateSelections } from '../utils/validation';
-import { breakfastOptions, lunchDinnerOptions, BREAKFAST_NOTE } from '../data/menuOptions';
-import { loadSubmission, saveSubmission } from '../utils/storage';
-import { getCurrentUser, updateHeadcount } from '../utils/auth';
+import { BREAKFAST_NOTE } from '../data/menuOptions';
+import { loadSubmission, saveSubmission, loadMenuItems } from '../utils/storage';
+import { getCurrentUser } from '../utils/auth';
 import StatusBanner from '../components/StatusBanner';
 import SelectionSection from '../components/SelectionSection';
 
@@ -17,6 +17,8 @@ export default function HouseDashboard() {
   const locked = isOrderingLocked();
 
   const [user, setUser] = useState(null);
+  const [breakfastOptions, setBreakfastOptions] = useState([]);
+  const [lunchDinnerOptions, setLunchDinnerOptions] = useState([]);
   const [breakfast, setBreakfast] = useState([]);
   const [lunch, setLunch] = useState(null);
   const [dinner, setDinner] = useState(null);
@@ -27,14 +29,20 @@ export default function HouseDashboard() {
   const [errors, setErrors] = useState([]);
   const [saved, setSaved] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState('');
 
   useEffect(() => {
     async function load() {
       try {
-        const currentUser = await getCurrentUser();
+        const [currentUser, menuItems] = await Promise.all([
+          getCurrentUser(),
+          loadMenuItems(),
+        ]);
         if (!currentUser) return;
         setUser(currentUser);
         setDailyHeadcount(String(currentUser.headcount || ''));
+        setBreakfastOptions(menuItems.filter((i) => i.category === 'breakfast'));
+        setLunchDinnerOptions(menuItems.filter((i) => i.category === 'lunch_dinner'));
 
         const existing = await loadSubmission(currentUser.id);
         if (existing) {
@@ -51,6 +59,7 @@ export default function HouseDashboard() {
         }
       } catch (err) {
         console.error('Failed to load dashboard:', err);
+        setLoadError('Failed to load your dashboard. Please refresh the page.');
       } finally {
         setLoading(false);
       }
@@ -87,14 +96,6 @@ export default function HouseDashboard() {
     }
   }
 
-  async function handleHeadcountUpdate() {
-    if (!user) return;
-    try {
-      await updateHeadcount(user.id, parseInt(dailyHeadcount, 10));
-    } catch (err) {
-      console.error('Failed to update headcount:', err);
-    }
-  }
 
   const tomorrow = new Date();
   tomorrow.setDate(tomorrow.getDate() + 1);
@@ -108,6 +109,10 @@ export default function HouseDashboard() {
     return <div className="page house-dashboard"><p>Loading...</p></div>;
   }
 
+  if (loadError) {
+    return <div className="page house-dashboard"><p className="form-error">{loadError}</p></div>;
+  }
+
   return (
     <div className="page house-dashboard">
       <div className="dashboard-header">
@@ -119,7 +124,7 @@ export default function HouseDashboard() {
       <StatusBanner />
 
       <div className="headcount-section">
-        <label htmlFor="daily-headcount">People eating today</label>
+        <label htmlFor="daily-headcount">People eating tomorrow</label>
         <div className="headcount-input-row">
           <input
             id="daily-headcount"
@@ -127,7 +132,6 @@ export default function HouseDashboard() {
             min="1"
             value={dailyHeadcount}
             onChange={(e) => setDailyHeadcount(e.target.value)}
-            onBlur={handleHeadcountUpdate}
             disabled={locked}
           />
           <span className="headcount-note">

@@ -1,18 +1,47 @@
-import { useState } from 'react';
-import { breakfastOptions, lunchDinnerOptions, BREAKFAST_NOTE, TAG_LEGEND } from '../data/menuOptions';
+import { useState, useEffect } from 'react';
+import { TAG_LEGEND, BREAKFAST_NOTE } from '../data/menuOptions';
+import { loadMenuItems } from '../utils/storage';
 
 const DIET_FILTERS = ['V', 'VG', 'K'];
 
 export default function Menu() {
   const [activeFilter, setActiveFilter] = useState(null);
+  const [breakfastItems, setBreakfastItems] = useState([]);
+  const [lunchDinnerItems, setLunchDinnerItems] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState('');
+
+  useEffect(() => {
+    async function load() {
+      try {
+        const items = await loadMenuItems();
+        setBreakfastItems(items.filter((i) => i.category === 'breakfast'));
+        setLunchDinnerItems(items.filter((i) => i.category === 'lunch_dinner'));
+      } catch (err) {
+        console.error('Failed to load menu:', err);
+        setLoadError('Failed to load menu. Please try again later.');
+      } finally {
+        setLoading(false);
+      }
+    }
+    load();
+  }, []);
 
   function matchesFilter(item) {
     if (!activeFilter) return true;
     return item.tags.includes(activeFilter);
   }
 
-  const filteredBreakfast = breakfastOptions.filter(matchesFilter);
-  const filteredLunchDinner = lunchDinnerOptions.filter(matchesFilter);
+  const filteredBreakfast = breakfastItems.filter(matchesFilter);
+  const filteredLunchDinner = lunchDinnerItems.filter(matchesFilter);
+
+  if (loading) {
+    return <div className="page menu-page"><p>Loading menu...</p></div>;
+  }
+
+  if (loadError) {
+    return <div className="page menu-page"><p className="form-error">{loadError}</p></div>;
+  }
 
   return (
     <div className="page menu-page">
@@ -62,7 +91,7 @@ export default function Menu() {
         {filteredBreakfast.length > 0 ? (
           <div className="menu-items">
             {filteredBreakfast.map((item) => (
-              <div key={item.name} className="menu-item">
+              <div key={item.id} className="menu-item">
                 <span className="menu-item-name">{item.name}</span>
                 <span className="menu-item-tags">
                   {item.tags.map((tag) => (
@@ -84,7 +113,7 @@ export default function Menu() {
         {filteredLunchDinner.length > 0 ? (
           <div className="menu-items">
             {filteredLunchDinner.map((item) => (
-              <div key={item.name} className="menu-item">
+              <div key={item.id} className="menu-item">
                 <span className="menu-item-name">{item.name}</span>
                 <span className="menu-item-tags">
                   {item.tags.map((tag) => (

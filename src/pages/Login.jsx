@@ -1,9 +1,11 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { login, getCurrentUser } from '../utils/auth';
+import { useAuth } from '../hooks/useAuth';
 
 export default function Login() {
   const navigate = useNavigate();
+  const { refreshUser } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
@@ -23,6 +25,8 @@ export default function Login() {
         setLoading(false);
         return;
       }
+
+      await refreshUser();
 
       if (user.role === 'chef') {
         navigate('/chef');
