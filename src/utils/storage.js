@@ -183,3 +183,11 @@ export async function updateSuggestionStatus(id, status) {
     .eq('id', id);
   if (error) throw error;
 }
+
+export async function clearReviewedSuggestions() {
+  const { error } = await supabase
+    .from('suggestions')
+    .delete()
+    .in('status', ['approved', 'dismissed']);
+  if (error) throw error;
+}

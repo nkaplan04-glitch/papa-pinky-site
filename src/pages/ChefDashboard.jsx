@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import {
   loadAllHouses, loadAllSubmissions, deleteHouse,
   loadAllMenuItems, addMenuItem, updateMenuItem, deleteMenuItem,
-  loadSuggestions, updateSuggestionStatus,
+  loadSuggestions, updateSuggestionStatus, clearReviewedSuggestions,
 } from '../utils/storage';
 import { createHouseAccount } from '../utils/auth';
 import { TAG_LEGEND } from '../data/menuOptions';
@@ -45,6 +45,13 @@ export default function ChefDashboard() {
   const [editCategory, setEditCategory] = useState('');
   const [editTags, setEditTags] = useState([]);
   const [editLoading, setEditLoading] = useState(false);
+
+  // Suggestion review
+  const [reviewingId, setReviewingId] = useState(null);
+  const [reviewName, setReviewName] = useState('');
+  const [reviewCategory, setReviewCategory] = useState('lunch_dinner');
+  const [reviewTags, setReviewTags] = useState([]);
+  const [reviewLoading, setReviewLoading] = useState(false);
 
   async function loadData() {
     try {
@@ -202,25 +209,55 @@ export default function ChefDashboard() {
   }
 
   // ===== Suggestions =====
-  async function handleSuggestionAction(suggestion, action) {
+  function startReviewing(suggestion) {
+    setReviewingId(suggestion.id);
+    setReviewName(suggestion.suggestion_text);
+    setReviewCategory(suggestion.category === 'general' ? 'lunch_dinner' : suggestion.category);
+    setReviewTags([]);
+  }
+
+  function cancelReviewing() {
+    setReviewingId(null);
+    setReviewName('');
+    setReviewCategory('lunch_dinner');
+    setReviewTags([]);
+  }
+
+  function toggleReviewTag(tag) {
+    setReviewTags((prev) => prev.includes(tag) ? prev.filter((t) => t !== tag) : [...prev, tag]);
+  }
+
+  async function handleAddFromReview(suggestionId) {
+    if (!reviewName.trim()) return;
+    setReviewLoading(true);
     try {
-      if (action === 'approve') {
-        const category = suggestion.category === 'general' ? 'lunch_dinner' : suggestion.category;
-        const newItem = await addMenuItem({
-          name: suggestion.suggestion_text,
-          category,
-          tags: [],
-        });
-        await updateSuggestionStatus(suggestion.id, 'approved');
-        await loadData();
-        setActiveTab('menu');
-        if (newItem) startEditing({ id: newItem.id, name: suggestion.suggestion_text, category, tags: [] });
-      } else {
-        await updateSuggestionStatus(suggestion.id, 'dismissed');
-        await loadData();
-      }
+      await addMenuItem({ name: reviewName.trim(), category: reviewCategory, tags: reviewTags });
+      await updateSuggestionStatus(suggestionId, 'approved');
+      cancelReviewing();
+      await loadData();
     } catch (err) {
-      console.error('Failed to update suggestion:', err);
+      console.error('Failed to add from suggestion:', err);
+    } finally {
+      setReviewLoading(false);
+    }
+  }
+
+  async function handleDismissSuggestion(suggestionId) {
+    try {
+      await updateSuggestionStatus(suggestionId, 'dismissed');
+      await loadData();
+    } catch (err) {
+      console.error('Failed to dismiss suggestion:', err);
+    }
+  }
+
+  async function handleClearReviewed() {
+    if (!window.confirm('Clear all reviewed suggestions? This cannot be undone.')) return;
+    try {
+      await clearReviewedSuggestions();
+      await loadData();
+    } catch (err) {
+      console.error('Failed to clear suggestions:', err);
     }
   }
 
@@ -527,28 +564,79 @@ export default function ChefDashboard() {
               <h3>Pending Review ({pendingSuggestions.length})</h3>
               <div className="suggestions-review-list">
                 {pendingSuggestions.map((s) => (
-                  <div key={s.id} className="suggestion-review-card">
-                    <div className="suggestion-review-info">
-                      <p className="suggestion-review-text">{s.suggestion_text}</p>
-                      <div className="suggestion-review-meta">
-                        <span className="suggestion-review-house">{s.profiles?.house_name || 'Unknown'}</span>
-                        <span className="suggestion-review-category">
-                          {s.category === 'breakfast' ? 'Breakfast' : s.category === 'lunch_dinner' ? 'Lunch/Dinner' : 'General'}
-                        </span>
-                        <span className="suggestion-review-date">
-                          {new Date(s.created_at).toLocaleDateString()}
-                        </span>
+                  reviewingId === s.id ? (
+                    <div key={s.id} className="suggestion-review-card editing">
+                      <div className="menu-edit-form">
+                        <p className="suggestion-review-meta" style={{ marginBottom: '12px' }}>
+                          <span className="suggestion-review-house">{s.profiles?.house_name || 'Unknown'}</span>
+                          {' suggested: '}
+                          <em>{s.suggestion_text}</em>
+                        </p>
+                        <div className="form-group">
+                          <label>Menu Item Name</label>
+                          <input
+                            type="text"
+                            value={reviewName}
+                            onChange={(e) => setReviewName(e.target.value)}
+                            placeholder="Edit the name as you'd like it on the menu"
+                          />
+                        </div>
+                        <div className="form-group">
+                          <label>Category</label>
+                          <select value={reviewCategory} onChange={(e) => setReviewCategory(e.target.value)}>
+                            <option value="breakfast">Breakfast</option>
+                            <option value="lunch_dinner">Lunch / Dinner</option>
+                          </select>
+                        </div>
+                        <div className="form-group">
+                          <label>Allergen / Dietary Tags</label>
+                          <div className="tag-picker">
+                            {ALL_TAGS.map((tag) => (
+                              <button
+                                key={tag}
+                                type="button"
+                                className={`tag-pick ${reviewTags.includes(tag) ? 'tag-picked' : ''}`}
+                                onClick={() => toggleReviewTag(tag)}
+                              >
+                                {tag} — {TAG_LEGEND[tag].label}
+                              </button>
+                            ))}
+                          </div>
+                        </div>
+                        <div className="menu-edit-actions">
+                          <button className="btn btn-primary" onClick={() => handleAddFromReview(s.id)} disabled={reviewLoading}>
+                            {reviewLoading ? 'Adding...' : 'Add to Menu'}
+                          </button>
+                          <button className="btn btn-secondary" onClick={cancelReviewing}>
+                            Cancel
+                          </button>
+                        </div>
                       </div>
                     </div>
-                    <div className="suggestion-review-actions">
-                      <button className="btn-approve" onClick={() => handleSuggestionAction(s, 'approve')}>
-                        Add to Menu
-                      </button>
-                      <button className="btn-reject" onClick={() => handleSuggestionAction(s, 'dismiss')}>
-                        Dismiss
-                      </button>
+                  ) : (
+                    <div key={s.id} className="suggestion-review-card">
+                      <div className="suggestion-review-info">
+                        <p className="suggestion-review-text">{s.suggestion_text}</p>
+                        <div className="suggestion-review-meta">
+                          <span className="suggestion-review-house">{s.profiles?.house_name || 'Unknown'}</span>
+                          <span className="suggestion-review-category">
+                            {s.category === 'breakfast' ? 'Breakfast' : s.category === 'lunch_dinner' ? 'Lunch/Dinner' : 'General'}
+                          </span>
+                          <span className="suggestion-review-date">
+                            {new Date(s.created_at).toLocaleDateString()}
+                          </span>
+                        </div>
+                      </div>
+                      <div className="suggestion-review-actions">
+                        <button className="btn-approve" onClick={() => startReviewing(s)}>
+                          Review
+                        </button>
+                        <button className="btn-reject" onClick={() => handleDismissSuggestion(s.id)}>
+                          Dismiss
+                        </button>
+                      </div>
                     </div>
-                  </div>
+                  )
                 ))}
               </div>
             </>
@@ -558,7 +646,12 @@ export default function ChefDashboard() {
 
           {reviewedSuggestions.length > 0 && (
             <>
-              <h3 style={{ marginTop: '32px' }}>Reviewed ({reviewedSuggestions.length})</h3>
+              <div className="create-account-header" style={{ marginTop: '32px' }}>
+                <h3>Reviewed ({reviewedSuggestions.length})</h3>
+                <button className="btn-reject" onClick={handleClearReviewed}>
+                  Clear All
+                </button>
+              </div>
               <div className="suggestions-review-list">
                 {reviewedSuggestions.map((s) => (
                   <div key={s.id} className={`suggestion-review-card suggestion-reviewed suggestion-${s.status}`}>
