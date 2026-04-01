@@ -1,7 +1,7 @@
 export default function Payment() {
   return (
     <div className="page payment-page">
-      <h1>Meal Plans & Payment</h1>
+      <h1>Pricing & Payment Information</h1>
 
       <section className="meal-plans-section">
         <h2>Fall 2026 Meal Plans</h2>
@@ -60,19 +60,19 @@ export default function Payment() {
         <div className="payment-methods">
           <div className="payment-card">
             <h3>Venmo</h3>
-            <p className="payment-handle">@PapaPinkys</p>
+            <p className="payment-handle">@bigpapapinky</p>
             <p className="payment-note">Include your house name in the note.</p>
           </div>
 
           <div className="payment-card">
             <h3>Zelle</h3>
-            <p className="payment-handle">papapinkys@email.com</p>
+            <p className="payment-handle">(734) 837-0716</p>
             <p className="payment-note">Include your house name in the memo.</p>
           </div>
         </div>
 
         <p className="payment-disclaimer">
-          Payment details shown above are placeholders. Contact Papa Pinky Meal Service directly for confirmed payment information.
+          Questions about payment? Contact Chef Roger at (734) 837-0716.
         </p>
       </section>
     </div>

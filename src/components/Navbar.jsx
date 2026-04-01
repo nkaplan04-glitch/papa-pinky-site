@@ -23,7 +23,7 @@ export default function Navbar() {
         <Link to="/about">About</Link>
         <Link to="/menu">Menu</Link>
         <Link to="/contact">Contact</Link>
-        <Link to="/payment">Pricing</Link>
+        <Link to="/payment">Pricing/Payment</Link>
         {!user && <Link to="/login">Login</Link>}
         {user?.role === 'house' && user.approved && (
           <Link to={`/house/${user.id}`}>Dashboard</Link>
