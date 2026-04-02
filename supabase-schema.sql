@@ -116,3 +116,18 @@ INSERT INTO menu_items (name, category, tags) VALUES
 ('Hibachi chicken with rice and vegetables', 'lunch_dinner', ARRAY['S']),
 ('Loaded nachos with guacamole, salsa and sour cream', 'lunch_dinner', ARRAY['V','K','G','D']),
 ('Chopped cheese with lettuce and tomatoes, ketchup and mayo on the side', 'lunch_dinner', ARRAY['G','D']);
+
+-- Site content (for editable pages like About)
+create table if not exists site_content (
+  key text primary key,
+  content jsonb not null,
+  updated_at timestamptz not null default now()
+);
+
+alter table site_content enable row level security;
+
+create policy "Anyone can read site_content"
+  on site_content for select using (true);
+
+create policy "Authenticated users can upsert site_content"
+  on site_content for all using (true) with check (true);

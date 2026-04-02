@@ -191,3 +191,23 @@ export async function clearReviewedSuggestions() {
     .in('status', ['approved', 'dismissed']);
   if (error) throw error;
 }
+
+// ===== SITE CONTENT =====
+
+export async function loadSiteContent(key) {
+  const { data, error } = await supabase
+    .from('site_content')
+    .select('content')
+    .eq('key', key)
+    .single();
+
+  if (error && error.code !== 'PGRST116') throw error;
+  return data?.content || null;
+}
+
+export async function saveSiteContent(key, content) {
+  const { error } = await supabase
+    .from('site_content')
+    .upsert({ key, content, updated_at: new Date().toISOString() }, { onConflict: 'key' });
+  if (error) throw error;
+}
