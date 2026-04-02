@@ -67,6 +67,8 @@ export default function Payment() {
               <li><strong>$11.50</strong> per meal</li>
               <li>Mix breakfast, lunch, or dinner</li>
               <li>Use over 55 days</li>
+              <li>$300 deposit due at sign up</li>
+              <li>Balance due August 1st, 2026</li>
             </ul>
           </div>
 
@@ -80,6 +82,8 @@ export default function Payment() {
               <li><strong>$11.00</strong> per meal</li>
               <li>Mix breakfast, lunch, or dinner</li>
               <li>Use over 125 days</li>
+              <li>$300 deposit due at sign up</li>
+              <li>Balance due August 1st, 2026</li>
             </ul>
           </div>
 
@@ -93,6 +97,8 @@ export default function Payment() {
               <li><strong>$13.50</strong> per meal</li>
               <li>Mix breakfast, lunch, or dinner</li>
               <li>Use over 80 days</li>
+              <li>$300 deposit due at sign up</li>
+              <li>Balance due August 1st, 2026</li>
             </ul>
           </div>
         </div>
