@@ -48,6 +48,54 @@ export default function Payment() {
             </ul>
           </div>
         </div>
+        <p className="plan-footnote">All meals include food, labor, and taxes. Meals are served 6 days a week (every day except Sunday).</p>
+      </section>
+
+      <section className="meal-plans-section">
+        <h2>Meal Block Plans</h2>
+        <p className="block-plan-intro">
+          Looking for a shorter-term commitment? Choose a meal block and mix up breakfast, lunch, or dinner however you want.
+        </p>
+        <div className="meal-plans">
+          <div className="plan-card">
+            <div className="plan-header">
+              <h3>55 Meal Block</h3>
+              <span className="plan-price">$632.50</span>
+              <span className="plan-period">55 meals</span>
+            </div>
+            <ul className="plan-details">
+              <li><strong>$11.50</strong> per meal</li>
+              <li>Mix breakfast, lunch, or dinner</li>
+              <li>Use over 55 days</li>
+            </ul>
+          </div>
+
+          <div className="plan-card plan-featured">
+            <div className="plan-header">
+              <h3>125 Meal Block</h3>
+              <span className="plan-price">$1,375</span>
+              <span className="plan-period">125 meals</span>
+            </div>
+            <ul className="plan-details">
+              <li><strong>$11.00</strong> per meal</li>
+              <li>Mix breakfast, lunch, or dinner</li>
+              <li>Use over 125 days</li>
+            </ul>
+          </div>
+
+          <div className="plan-card">
+            <div className="plan-header">
+              <h3>80 Meal Block</h3>
+              <span className="plan-price">$1,080</span>
+              <span className="plan-period">80 meals</span>
+            </div>
+            <ul className="plan-details">
+              <li><strong>$13.50</strong> per meal</li>
+              <li>Mix breakfast, lunch, or dinner</li>
+              <li>Use over 80 days</li>
+            </ul>
+          </div>
+        </div>
         <p className="plan-footnote">All meals include food, labor, and taxes.</p>
       </section>
 

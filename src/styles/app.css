@@ -473,6 +473,13 @@ img {
   margin-top: 8px;
 }
 
+.block-plan-intro {
+  color: var(--color-text-muted);
+  font-size: 15px;
+  margin-bottom: 20px;
+  line-height: 1.6;
+}
+
 /* ===== PAYMENT METHODS ===== */
 .payment-section {
   margin-bottom: 32px;
