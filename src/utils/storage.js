@@ -31,6 +31,7 @@ export async function saveSubmission(houseId, submission) {
     lunch_time: submission.lunchTime,
     dinner_time: submission.dinnerTime,
     daily_headcount: submission.dailyHeadcount,
+    notes: submission.notes || '',
     submitted_at: new Date().toISOString(),
   };
 
@@ -63,6 +64,7 @@ export async function loadAllSubmissions() {
       lunchTime: row.lunch_time,
       dinnerTime: row.dinner_time,
       dailyHeadcount: row.daily_headcount,
+      notes: row.notes || '',
       submittedAt: row.submitted_at,
     };
   }

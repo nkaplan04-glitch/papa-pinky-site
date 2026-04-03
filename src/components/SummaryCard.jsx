@@ -36,6 +36,12 @@ export default function SummaryCard({ house, submission, headcount }) {
             <strong>Dinner{submission.dinnerTime ? ` — ${submission.dinnerTime}` : ''}</strong>
             <p>{submission.dinner}</p>
           </div>
+          {submission.notes && (
+            <div className="summary-notes">
+              <strong>Notes:</strong>
+              <p>{submission.notes}</p>
+            </div>
+          )}
           {submission.submittedAt && (
             <p className="summary-timestamp">
               Last updated: {new Date(submission.submittedAt).toLocaleString()}

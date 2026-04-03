@@ -26,6 +26,7 @@ export default function HouseDashboard() {
   const [lunchTime, setLunchTime] = useState('');
   const [dinnerTime, setDinnerTime] = useState('');
   const [dailyHeadcount, setDailyHeadcount] = useState('');
+  const [notes, setNotes] = useState('');
   const [errors, setErrors] = useState([]);
   const [saved, setSaved] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -55,6 +56,7 @@ export default function HouseDashboard() {
           if (existing.daily_headcount) {
             setDailyHeadcount(String(existing.daily_headcount));
           }
+          setNotes(existing.notes || '');
           setSaved(true);
         }
       } catch (err) {
@@ -89,6 +91,7 @@ export default function HouseDashboard() {
         lunchTime,
         dinnerTime,
         dailyHeadcount: parseInt(dailyHeadcount, 10),
+        notes: notes.trim(),
       });
       setSaved(true);
     } catch (err) {
@@ -214,6 +217,18 @@ export default function HouseDashboard() {
             <option key={t} value={t}>{t}</option>
           ))}
         </select>
+      </div>
+
+      <div className="notes-section">
+        <label htmlFor="order-notes">Notes for Chef Roger</label>
+        <textarea
+          id="order-notes"
+          value={notes}
+          onChange={(e) => setNotes(e.target.value)}
+          placeholder='e.g. "Use the side door for delivery", "No beans in the burrito", etc.'
+          rows={3}
+          disabled={locked}
+        />
       </div>
 
       {errors.length > 0 && (
