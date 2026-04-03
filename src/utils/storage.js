@@ -83,10 +83,7 @@ export async function loadAllHouses() {
 }
 
 export async function deleteHouse(houseId) {
-  const { error } = await supabase
-    .from('profiles')
-    .delete()
-    .eq('id', houseId);
+  const { error } = await supabase.rpc('delete_user_completely', { user_id: houseId });
   if (error) throw error;
 }
 

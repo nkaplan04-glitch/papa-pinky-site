@@ -131,3 +131,11 @@ create policy "Anyone can read site_content"
 
 create policy "Authenticated users can upsert site_content"
   on site_content for all using (true) with check (true);
+
+-- Function to fully delete a user (auth + profile) so the email can be reused
+create or replace function delete_user_completely(user_id uuid)
+returns void as $$
+begin
+  delete from auth.users where id = user_id;
+end;
+$$ language plpgsql security definer;
