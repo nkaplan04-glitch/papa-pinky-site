@@ -7,7 +7,7 @@ export default function Home() {
       <section className="hero-section">
         <img src={logo} alt="Papa Pinky Meal Service" className="hero-logo" />
         <h1>Papa Pinky Meal Service</h1>
-        <p className="tagline">Fresh meals for the house, every single day.</p>
+        <p className="tagline">Consistent food delivery service Sunday through Friday.</p>
         <p className="hero-description">
           Chef Roger Urso handles daily meal planning and cooking for fraternity houses
           at the University of Michigan. No more messy spreadsheets — just pick your meals,
