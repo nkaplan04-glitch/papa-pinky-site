@@ -306,25 +306,29 @@ img {
 }
 
 /* ===== ABOUT PAGE ===== */
-.about-page h1 {
+.about-page h1,
+.terms-page h1 {
   font-size: 36px;
   font-weight: 700;
   margin-bottom: 36px;
   color: var(--color-navy);
 }
 
-.about-section {
+.about-section,
+.terms-section {
   margin-bottom: 32px;
 }
 
-.about-section h2 {
+.about-section h2,
+.terms-section h2 {
   font-size: 22px;
   font-weight: 600;
   margin-bottom: 12px;
   color: var(--color-text-bright);
 }
 
-.about-section p {
+.about-section p,
+.terms-section p {
   font-size: 16px;
   color: var(--color-text-muted);
   line-height: 1.7;
@@ -2006,6 +2010,34 @@ img {
   color: var(--color-text-muted);
   padding: 4px 0;
   line-height: 1.6;
+}
+
+/* ===== EDITABLE SECTION VARIANTS ===== */
+.hero-editable-section {
+  margin-bottom: 4px;
+}
+
+.hero-editable-section p {
+  color: var(--color-text-muted);
+  font-size: 16px;
+  line-height: 1.7;
+}
+
+.contact-editable-section {
+  margin-bottom: 24px;
+}
+
+.contact-editable-section h2 {
+  font-size: 20px;
+  font-weight: 600;
+  margin-bottom: 12px;
+  color: var(--color-text-bright);
+}
+
+.contact-editable-section p {
+  font-size: 16px;
+  color: var(--color-text-muted);
+  line-height: 1.7;
 }
 
 /* ===== RESPONSIVE ===== */

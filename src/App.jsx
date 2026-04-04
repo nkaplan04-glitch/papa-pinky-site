@@ -8,6 +8,7 @@ import Login from './pages/Login';
 import Menu from './pages/Menu';
 import Contact from './pages/Contact';
 import Suggestions from './pages/Suggestions';
+import Terms from './pages/Terms';
 import HouseDashboard from './pages/HouseDashboard';
 import ChefDashboard from './pages/ChefDashboard';
 
@@ -22,6 +23,7 @@ export default function App() {
           <Route path="/menu" element={<Menu />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/payment" element={<Payment />} />
+          <Route path="/terms" element={<Terms />} />
           <Route path="/login" element={<Login />} />
 
           <Route

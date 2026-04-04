@@ -24,6 +24,7 @@ export default function Navbar() {
         <Link to="/menu">Menu</Link>
         <Link to="/contact">Contact</Link>
         <Link to="/payment">Pricing/Payment</Link>
+        <Link to="/terms">Terms of Service</Link>
         {!user && <Link to="/login">Login</Link>}
         {user?.role === 'house' && user.approved && (
           <>
