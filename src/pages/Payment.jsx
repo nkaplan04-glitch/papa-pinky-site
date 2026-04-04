@@ -7,24 +7,24 @@ const DEFAULT_CONTENT = {
   semesterPlans: [
     {
       name: 'Breakfast, Lunch & Dinner',
-      price: '$2,139',
+      price: '$2,277',
       period: 'full semester',
       featured: true,
-      details: ['$7.66 per meal', '279 total meals over 93 days', '$500 deposit due at sign up', 'Balance due August 1st, 2026'],
+      details: ['$7.67 per meal', '297 total meals over 99 days', 'All university breaks factored in', '$500 deposit due at sign up', 'Balance due August 1st, 2026'],
     },
     {
       name: 'Lunch & Dinner',
-      price: '$1,767',
+      price: '$1,881',
       period: 'full semester',
       featured: false,
-      details: ['$9.50 per meal', '186 total meals over 93 days', '$500 deposit due at sign up', 'Balance due August 1st, 2026'],
+      details: ['$9.50 per meal', '198 total meals over 99 days', 'All university breaks factored in', '$500 deposit due at sign up', 'Balance due August 1st, 2026'],
     },
     {
       name: 'Dinner Only',
-      price: '$1,209',
+      price: '$1,287',
       period: 'full semester',
       featured: false,
-      details: ['$13.00 per meal', '93 total meals over 93 days', '$500 deposit due at sign up', 'Balance due August 1st, 2026'],
+      details: ['$13.00 per meal', '99 total meals over 99 days', 'All university breaks factored in', '$500 deposit due at sign up', 'Balance due August 1st, 2026'],
     },
   ],
   semesterFootnote: 'All meals include food, labor, and taxes. Meals are served 6 days a week (every day except Saturday).',
@@ -79,7 +79,7 @@ function PlanCard({ plan }) {
   );
 }
 
-function PlanEditor({ plan, onChange }) {
+function PlanEditor({ plan, onChange, onRemove }) {
   function updateDetail(index, value) {
     const updated = [...plan.details];
     updated[index] = value;
@@ -98,14 +98,17 @@ function PlanEditor({ plan, onChange }) {
     <div className="about-edit-section">
       <div className="about-edit-section-header">
         <span className="about-edit-label">{plan.name || 'Plan'}</span>
-        <label style={{ fontSize: '13px', display: 'flex', alignItems: 'center', gap: '6px' }}>
-          <input
-            type="checkbox"
-            checked={plan.featured}
-            onChange={(e) => onChange({ ...plan, featured: e.target.checked })}
-          />
-          Featured
-        </label>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+          <label style={{ fontSize: '13px', display: 'flex', alignItems: 'center', gap: '6px' }}>
+            <input
+              type="checkbox"
+              checked={plan.featured}
+              onChange={(e) => onChange({ ...plan, featured: e.target.checked })}
+            />
+            Featured
+          </label>
+          {onRemove && <button className="btn-reject" onClick={onRemove}>Remove</button>}
+        </div>
       </div>
       <div className="form-group">
         <label>Plan Name</label>
@@ -222,16 +225,19 @@ export default function Payment() {
       <div className="page payment-page">
         <h1>Pricing & Payment Information</h1>
         <div className="about-edit-form">
+          <div className="edit-top-actions">
+            <button className="btn btn-primary" onClick={handleSave} disabled={saving}>
+              {saving ? 'Saving...' : 'Save Changes'}
+            </button>
+            <button className="btn btn-secondary" onClick={cancelEditing}>Cancel</button>
+          </div>
           <h2 style={{ marginBottom: '12px' }}>Semester Plans</h2>
           <div className="form-group">
             <label>Section Title</label>
             <input type="text" value={editContent.semesterTitle} onChange={(e) => updateField('semesterTitle', e.target.value)} />
           </div>
           {editContent.semesterPlans.map((plan, i) => (
-            <div key={i} style={{ position: 'relative' }}>
-              <PlanEditor plan={plan} onChange={(p) => updatePlan('semesterPlans', i, p)} />
-              <button className="btn-reject" onClick={() => removePlan('semesterPlans', i)} style={{ position: 'absolute', top: '12px', right: '12px' }}>Remove</button>
-            </div>
+            <PlanEditor key={i} plan={plan} onChange={(p) => updatePlan('semesterPlans', i, p)} onRemove={() => removePlan('semesterPlans', i)} />
           ))}
           <button className="btn btn-secondary" onClick={() => addPlan('semesterPlans')} style={{ marginBottom: '16px' }}>+ Add Semester Plan</button>
           <div className="form-group">
@@ -249,10 +255,7 @@ export default function Payment() {
             <textarea value={editContent.blockIntro} onChange={(e) => updateField('blockIntro', e.target.value)} rows={2} />
           </div>
           {editContent.blockPlans.map((plan, i) => (
-            <div key={i} style={{ position: 'relative' }}>
-              <PlanEditor plan={plan} onChange={(p) => updatePlan('blockPlans', i, p)} />
-              <button className="btn-reject" onClick={() => removePlan('blockPlans', i)} style={{ position: 'absolute', top: '12px', right: '12px' }}>Remove</button>
-            </div>
+            <PlanEditor key={i} plan={plan} onChange={(p) => updatePlan('blockPlans', i, p)} onRemove={() => removePlan('blockPlans', i)} />
           ))}
           <button className="btn btn-secondary" onClick={() => addPlan('blockPlans')} style={{ marginBottom: '16px' }}>+ Add Block Plan</button>
           <div className="form-group">

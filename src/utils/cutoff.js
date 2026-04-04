@@ -3,7 +3,7 @@
 // 'open'   — ordering always open (for demos)
 // 'locked' — ordering always locked (for demos)
 // 'auto'   — use real clock, locks at 3:30 AM
-const DEMO_MODE = 'open';
+const DEMO_MODE = 'auto';
 const CUTOFF_HOUR = 3;
 const CUTOFF_MINUTE = 30;
 

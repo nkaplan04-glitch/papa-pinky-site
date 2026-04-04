@@ -47,11 +47,6 @@ export async function logout() {
   if (error) throw error;
 }
 
-export async function getCurrentSession() {
-  const { data: { session } } = await supabase.auth.getSession();
-  return session;
-}
-
 export async function getCurrentUser() {
   const { data: { session } } = await supabase.auth.getSession();
   if (!session) return null;
@@ -72,14 +67,6 @@ export async function getCurrentUser() {
     role: profile.role,
     approved: profile.approved,
   };
-}
-
-export async function updateHeadcount(userId, headcount) {
-  const { error } = await supabase
-    .from('profiles')
-    .update({ headcount })
-    .eq('id', userId);
-  if (error) throw error;
 }
 
 export function onAuthStateChange(callback) {

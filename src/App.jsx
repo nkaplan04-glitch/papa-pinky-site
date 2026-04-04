@@ -1,6 +1,16 @@
-import { Routes, Route } from 'react-router-dom';
+import { Routes, Route, Link } from 'react-router-dom';
 import Navbar from './components/Navbar';
 import ProtectedRoute from './components/ProtectedRoute';
+
+function NotFound() {
+  return (
+    <div className="page" style={{ textAlign: 'center', paddingTop: '80px' }}>
+      <h1 style={{ fontSize: '48px', marginBottom: '16px' }}>404</h1>
+      <p style={{ fontSize: '18px', color: '#6b7280', marginBottom: '24px' }}>Page not found.</p>
+      <Link to="/" className="btn btn-primary">Back to Home</Link>
+    </div>
+  );
+}
 import Home from './pages/Home';
 import About from './pages/About';
 import Payment from './pages/Payment';
@@ -50,6 +60,7 @@ export default function App() {
               </ProtectedRoute>
             }
           />
+          <Route path="*" element={<NotFound />} />
         </Routes>
       </main>
     </>

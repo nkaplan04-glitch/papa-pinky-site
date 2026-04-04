@@ -87,6 +87,12 @@ export default function EditableSections({ contentKey, defaultSections, sectionC
 
       {editing ? (
         <div className="about-edit-form">
+          <div className="edit-top-actions">
+            <button className="btn btn-primary" onClick={handleSave} disabled={saving}>
+              {saving ? 'Saving...' : 'Save Changes'}
+            </button>
+            <button className="btn btn-secondary" onClick={cancelEditing}>Cancel</button>
+          </div>
           {editSections.map((section, i) => (
             <div key={i} className="about-edit-section">
               <div className="about-edit-section-header">

@@ -355,6 +355,20 @@ img {
 }
 
 /* ===== ABOUT EDIT FORM ===== */
+.edit-top-actions {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+  padding: 14px 16px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  position: sticky;
+  top: 70px;
+  z-index: 10;
+  box-shadow: var(--shadow-sm);
+}
+
 .about-edit-form {
   max-width: 700px;
 }

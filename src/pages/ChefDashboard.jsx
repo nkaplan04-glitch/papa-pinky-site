@@ -18,6 +18,7 @@ export default function ChefDashboard() {
   const [menuItems, setMenuItems] = useState([]);
   const [suggestions, setSuggestions] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState('');
 
   // House creation form
   const [showForm, setShowForm] = useState(false);
@@ -67,6 +68,7 @@ export default function ChefDashboard() {
       setSuggestions(allSuggestions);
     } catch (err) {
       console.error('Failed to load chef dashboard:', err);
+      setLoadError('Failed to load dashboard data. Please refresh the page.');
     } finally {
       setLoading(false);
     }
@@ -280,6 +282,10 @@ export default function ChefDashboard() {
 
   if (loading) {
     return <div className="page chef-dashboard"><p>Loading...</p></div>;
+  }
+
+  if (loadError) {
+    return <div className="page chef-dashboard"><p className="form-error">{loadError}</p></div>;
   }
 
   return (

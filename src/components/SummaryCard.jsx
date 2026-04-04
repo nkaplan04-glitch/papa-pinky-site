@@ -9,7 +9,7 @@ export default function SummaryCard({ house, submission, headcount }) {
           {headcount > 0 && (
             <span className="summary-headcount">
               {hasSubmitted && submission.dailyHeadcount
-                ? `${submission.dailyHeadcount} eating today`
+                ? `${submission.dailyHeadcount} eating tomorrow`
                 : `${headcount} on meal plan`}
             </span>
           )}

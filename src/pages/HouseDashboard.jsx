@@ -72,7 +72,7 @@ export default function HouseDashboard() {
   async function handleSubmit() {
     const validationErrors = validateSelections(breakfast, lunch, dinner, breakfastTime, lunchTime, dinnerTime);
     if (!dailyHeadcount || parseInt(dailyHeadcount, 10) < 1) {
-      validationErrors.push('Please enter how many people are eating today.');
+      validationErrors.push('Please enter how many people are eating tomorrow.');
     }
     if (validationErrors.length > 0) {
       setErrors(validationErrors);

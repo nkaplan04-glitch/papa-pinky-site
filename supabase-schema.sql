@@ -22,6 +22,7 @@ create table submissions (
   lunch_time text,
   dinner_time text,
   daily_headcount integer,
+  notes text not null default '',
   submitted_at timestamptz not null default now(),
   unique(house_id, order_date)
 );
@@ -133,9 +134,17 @@ create policy "Authenticated users can upsert site_content"
   on site_content for all using (true) with check (true);
 
 -- Function to fully delete a user (auth + profile) so the email can be reused
+-- Only allows the chef role to perform this action
 create or replace function delete_user_completely(user_id uuid)
 returns void as $$
+declare
+  caller_role text;
 begin
+  select role into caller_role from public.profiles where id = auth.uid();
+  if caller_role is null or caller_role != 'chef' then
+    raise exception 'Only the chef can delete users';
+  end if;
+
   delete from auth.users where id = user_id;
 end;
 $$ language plpgsql security definer;
