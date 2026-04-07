@@ -10,6 +10,7 @@ const DEFAULT_CONTENT = {
       price: '$2,277',
       period: 'full semester',
       featured: true,
+      spotsLeft: '',
       details: ['$7.67 per meal', '297 total meals over 99 days', 'All university breaks factored in', '$500 deposit due at sign up', 'Balance due August 1st, 2026'],
     },
     {
@@ -17,6 +18,7 @@ const DEFAULT_CONTENT = {
       price: '$1,881',
       period: 'full semester',
       featured: false,
+      spotsLeft: '',
       details: ['$9.50 per meal', '198 total meals over 99 days', 'All university breaks factored in', '$500 deposit due at sign up', 'Balance due August 1st, 2026'],
     },
     {
@@ -24,6 +26,7 @@ const DEFAULT_CONTENT = {
       price: '$1,287',
       period: 'full semester',
       featured: false,
+      spotsLeft: '',
       details: ['$13.00 per meal', '99 total meals over 99 days', 'All university breaks factored in', '$500 deposit due at sign up', 'Balance due August 1st, 2026'],
     },
   ],
@@ -36,6 +39,7 @@ const DEFAULT_CONTENT = {
       price: '$632.50',
       period: '55 meals',
       featured: false,
+      spotsLeft: '',
       details: ['$11.50 per meal', 'Mix breakfast, lunch, or dinner', 'Use over 55 days', '$300 deposit due at sign up', 'Balance due August 1st, 2026'],
     },
     {
@@ -43,6 +47,7 @@ const DEFAULT_CONTENT = {
       price: '$1,375',
       period: '125 meals',
       featured: true,
+      spotsLeft: '',
       details: ['$11.00 per meal', 'Mix breakfast, lunch, or dinner', 'Use over 125 days', '$300 deposit due at sign up', 'Balance due August 1st, 2026'],
     },
     {
@@ -50,6 +55,7 @@ const DEFAULT_CONTENT = {
       price: '$1,080',
       period: '80 meals',
       featured: false,
+      spotsLeft: '',
       details: ['$13.50 per meal', 'Mix breakfast, lunch, or dinner', 'Use over 80 days', '$300 deposit due at sign up', 'Balance due August 1st, 2026'],
     },
   ],
@@ -63,8 +69,19 @@ const DEFAULT_CONTENT = {
 };
 
 function PlanCard({ plan }) {
+  const spots = plan.spotsLeft;
+  const hasSpots = spots !== undefined && spots !== null && spots !== '';
+  const spotsNum = parseInt(spots, 10);
+  const isFull = hasSpots && spotsNum === 0;
+  const isLow = hasSpots && spotsNum > 0 && spotsNum <= 3;
+
   return (
     <div className={`plan-card ${plan.featured ? 'plan-featured' : ''}`}>
+      {hasSpots && (
+        <div className={`spots-badge ${isFull ? 'spots-full' : isLow ? 'spots-low' : 'spots-available'}`}>
+          {isFull ? 'Full' : `${spots} spots left`}
+        </div>
+      )}
       <div className="plan-header">
         <h3>{plan.name}</h3>
         <span className="plan-price">{plan.price}</span>
@@ -122,6 +139,10 @@ function PlanEditor({ plan, onChange, onRemove }) {
         <div className="form-group" style={{ flex: 1 }}>
           <label>Period</label>
           <input type="text" value={plan.period} onChange={(e) => onChange({ ...plan, period: e.target.value })} />
+        </div>
+        <div className="form-group" style={{ flex: 1 }}>
+          <label>Spots Left</label>
+          <input type="text" value={plan.spotsLeft || ''} onChange={(e) => onChange({ ...plan, spotsLeft: e.target.value })} placeholder="Leave blank to hide" />
         </div>
       </div>
       <div className="form-group">

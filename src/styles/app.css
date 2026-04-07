@@ -473,6 +473,30 @@ img {
   letter-spacing: 0.5px;
 }
 
+.spots-badge {
+  text-align: center;
+  font-size: 13px;
+  font-weight: 700;
+  padding: 6px 14px;
+  border-radius: 8px;
+  margin-bottom: 12px;
+}
+
+.spots-available {
+  background: #dcfce7;
+  color: #166534;
+}
+
+.spots-low {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.spots-full {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
 .plan-header {
   text-align: center;
   padding-bottom: 20px;
