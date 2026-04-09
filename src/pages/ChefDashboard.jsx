@@ -3,12 +3,22 @@ import {
   loadAllHouses, loadAllSubmissions, deleteHouse,
   loadAllMenuItems, addMenuItem, updateMenuItem, deleteMenuItem,
   loadSuggestions, updateSuggestionStatus, clearReviewedSuggestions,
+  loadSiteContent, saveSiteContent,
 } from '../utils/storage';
 import { createHouseAccount } from '../utils/auth';
 import { TAG_LEGEND } from '../data/menuOptions';
 import SummaryCard from '../components/SummaryCard';
 
 const ALL_TAGS = Object.keys(TAG_LEGEND);
+
+const DEFAULT_INVENTORY_CATEGORIES = [
+  'Dry Goods', 'Proteins', 'Starches', 'Spices', 'Dairy', 'Sauces', 'Vegetables',
+];
+
+const DEFAULT_INVENTORY = {
+  categories: DEFAULT_INVENTORY_CATEGORIES,
+  items: Object.fromEntries(DEFAULT_INVENTORY_CATEGORIES.map((c) => [c, []])),
+};
 
 export default function ChefDashboard() {
   const [activeTab, setActiveTab] = useState('orders');
@@ -19,6 +29,14 @@ export default function ChefDashboard() {
   const [suggestions, setSuggestions] = useState([]);
   const [loading, setLoading] = useState(true);
   const [loadError, setLoadError] = useState('');
+
+  // Inventory
+  const [inventory, setInventory] = useState(DEFAULT_INVENTORY);
+  const [inventoryLoaded, setInventoryLoaded] = useState(false);
+  const [inventoryInputs, setInventoryInputs] = useState({});
+  const [inventorySaving, setInventorySaving] = useState(false);
+  const [inventorySaved, setInventorySaved] = useState('');
+  const [newCategoryName, setNewCategoryName] = useState('');
 
   // House creation form
   const [showForm, setShowForm] = useState(false);
@@ -263,6 +281,106 @@ export default function ChefDashboard() {
     }
   }
 
+  // ===== Inventory =====
+  async function loadInventory() {
+    try {
+      const saved = await loadSiteContent('chef_inventory');
+      if (saved && saved.categories) {
+        setInventory(saved);
+      } else if (saved) {
+        const cats = Object.keys(saved);
+        const items = {};
+        for (const c of cats) {
+          items[c] = (saved[c] || []).map((item) =>
+            typeof item === 'string' ? { name: item, qty: '' } : item
+          );
+        }
+        setInventory({ categories: cats, items });
+      }
+    } catch (err) {
+      console.error('Failed to load inventory:', err);
+    } finally {
+      setInventoryLoaded(true);
+    }
+  }
+
+  useEffect(() => {
+    if (activeTab === 'inventory' && !inventoryLoaded) {
+      loadInventory();
+    }
+  }, [activeTab, inventoryLoaded]);
+
+  async function saveInventory(updated) {
+    setInventorySaving(true);
+    setInventorySaved('');
+    try {
+      await saveSiteContent('chef_inventory', updated);
+      setInventorySaved('Saved');
+      setTimeout(() => setInventorySaved(''), 2000);
+    } catch (err) {
+      console.error('Failed to save inventory:', err);
+    } finally {
+      setInventorySaving(false);
+    }
+  }
+
+  async function handleAddInventoryItem(category) {
+    const value = (inventoryInputs[category] || '').trim();
+    if (!value) return;
+
+    const updated = {
+      ...inventory,
+      items: { ...inventory.items, [category]: [...(inventory.items[category] || []), { name: value, qty: '' }] },
+    };
+    setInventory(updated);
+    setInventoryInputs((prev) => ({ ...prev, [category]: '' }));
+    await saveInventory(updated);
+  }
+
+  async function handleRemoveInventoryItem(category, index) {
+    const updated = {
+      ...inventory,
+      items: { ...inventory.items, [category]: inventory.items[category].filter((_, i) => i !== index) },
+    };
+    setInventory(updated);
+    await saveInventory(updated);
+  }
+
+  function handleUpdateItemQty(category, index, qty) {
+    const updatedItems = [...inventory.items[category]];
+    updatedItems[index] = { ...updatedItems[index], qty };
+    setInventory((prev) => ({
+      ...prev,
+      items: { ...prev.items, [category]: updatedItems },
+    }));
+  }
+
+  async function handleSaveItemQty(category) {
+    await saveInventory(inventory);
+  }
+
+  async function handleAddCategory() {
+    const name = newCategoryName.trim();
+    if (!name || inventory.categories.includes(name)) return;
+    const updated = {
+      categories: [...inventory.categories, name],
+      items: { ...inventory.items, [name]: [] },
+    };
+    setInventory(updated);
+    setNewCategoryName('');
+    await saveInventory(updated);
+  }
+
+  async function handleRemoveCategory(category) {
+    if (!window.confirm(`Remove "${category}" and all its items?`)) return;
+    const newCats = inventory.categories.filter((c) => c !== category);
+    const newItems = { ...inventory.items };
+    delete newItems[category];
+    const updated = { categories: newCats, items: newItems };
+    setInventory(updated);
+    await saveInventory(updated);
+  }
+
   // ===== Computed values =====
   const submittedCount = houses.filter((h) => submissions[h.id]).length;
   const notSubmittedCount = houses.length - submittedCount;
@@ -312,6 +430,12 @@ export default function ChefDashboard() {
           onClick={() => setActiveTab('suggestions')}
         >
           Suggestions {pendingSuggestions.length > 0 && <span className="tab-badge">{pendingSuggestions.length}</span>}
+        </button>
+        <button
+          className={`chef-tab ${activeTab === 'inventory' ? 'active' : ''}`}
+          onClick={() => setActiveTab('inventory')}
+        >
+          Inventory
         </button>
       </div>
 
@@ -674,6 +798,93 @@ export default function ChefDashboard() {
                 ))}
               </div>
             </>
+          )}
+        </div>
+      )}
+
+      {/* ===== INVENTORY TAB ===== */}
+      {activeTab === 'inventory' && (
+        <div className="chef-inventory-section">
+          <div className="create-account-header">
+            <div>
+              <h2>Master Inventory</h2>
+              {inventorySaved && <span className="inventory-saved-badge">{inventorySaved}</span>}
+            </div>
+          </div>
+
+          <div className="inventory-add-category">
+            <input
+              type="text"
+              placeholder="New category name..."
+              value={newCategoryName}
+              onChange={(e) => setNewCategoryName(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') {
+                  e.preventDefault();
+                  handleAddCategory();
+                }
+              }}
+            />
+            <button className="btn btn-primary" onClick={handleAddCategory} disabled={!newCategoryName.trim()}>
+              + Add Category
+            </button>
+          </div>
+
+          {!inventoryLoaded ? (
+            <p>Loading inventory...</p>
+          ) : (
+            <div className="inventory-grid">
+              {inventory.categories.map((category) => (
+                <div key={category} className="inventory-category">
+                  <div className="inventory-category-header">
+                    <h3>{category} <span className="inventory-count">({(inventory.items[category] || []).length})</span></h3>
+                    <button className="inventory-remove-cat" onClick={() => handleRemoveCategory(category)} title="Remove category">×</button>
+                  </div>
+                  <div className="inventory-add-row">
+                    <input
+                      type="text"
+                      placeholder={`Add item...`}
+                      value={inventoryInputs[category] || ''}
+                      onChange={(e) => setInventoryInputs((prev) => ({ ...prev, [category]: e.target.value }))}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter') {
+                          e.preventDefault();
+                          handleAddInventoryItem(category);
+                        }
+                      }}
+                    />
+                    <button
+                      className="btn btn-primary"
+                      onClick={() => handleAddInventoryItem(category)}
+                      disabled={inventorySaving}
+                    >
+                      +
+                    </button>
+                  </div>
+                  <ul className="inventory-list">
+                    {(inventory.items[category] || []).map((item, i) => (
+                      <li key={i} className="inventory-item">
+                        <span className="inventory-item-name">{item.name}</span>
+                        <div className="inventory-item-controls">
+                          <input
+                            type="text"
+                            className="inventory-qty"
+                            value={item.qty}
+                            onChange={(e) => handleUpdateItemQty(category, i, e.target.value)}
+                            onBlur={() => handleSaveItemQty(category)}
+                            placeholder="Qty"
+                          />
+                          <button className="inventory-remove" onClick={() => handleRemoveInventoryItem(category, i)}>×</button>
+                        </div>
+                      </li>
+                    ))}
+                    {(inventory.items[category] || []).length === 0 && (
+                      <li className="inventory-empty">No items yet</li>
+                    )}
+                  </ul>
+                </div>
+              ))}
+            </div>
           )}
         </div>
       )}

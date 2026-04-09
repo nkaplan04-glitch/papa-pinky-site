@@ -2050,6 +2050,213 @@ img {
   line-height: 1.6;
 }
 
+/* ===== INVENTORY ===== */
+.chef-inventory-section {
+  margin-top: 8px;
+}
+
+.chef-inventory-section h2 {
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--color-text-bright);
+  margin-bottom: 0;
+  display: inline-block;
+}
+
+.inventory-saved-badge {
+  display: inline-block;
+  margin-left: 12px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #166534;
+  background: #dcfce7;
+  padding: 3px 10px;
+  border-radius: 12px;
+  vertical-align: middle;
+}
+
+.inventory-add-category {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+  margin-top: 16px;
+}
+
+.inventory-add-category input {
+  padding: 8px 14px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  font-size: 14px;
+  font-family: var(--font);
+  background: #ffffff;
+  color: var(--color-text);
+  width: 240px;
+}
+
+.inventory-add-category input:focus {
+  outline: none;
+  border-color: var(--color-navy);
+  box-shadow: 0 0 0 3px var(--color-navy-light);
+}
+
+.inventory-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 16px;
+}
+
+.inventory-category {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: 18px;
+  box-shadow: var(--shadow-sm);
+}
+
+.inventory-category-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.inventory-category-header h3 {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--color-navy);
+  margin: 0;
+}
+
+.inventory-remove-cat {
+  background: none;
+  border: none;
+  color: var(--color-text-muted);
+  font-size: 20px;
+  cursor: pointer;
+  padding: 0 4px;
+  line-height: 1;
+  opacity: 0.4;
+  transition: opacity 0.15s, color 0.15s;
+}
+
+.inventory-remove-cat:hover {
+  opacity: 1;
+  color: var(--color-error);
+}
+
+.inventory-count {
+  font-weight: 400;
+  color: var(--color-text-muted);
+  font-size: 14px;
+}
+
+.inventory-add-row {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.inventory-add-row input {
+  flex: 1;
+  padding: 8px 12px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  font-size: 14px;
+  font-family: var(--font);
+  background: #ffffff;
+  color: var(--color-text);
+}
+
+.inventory-add-row input:focus {
+  outline: none;
+  border-color: var(--color-navy);
+  box-shadow: 0 0 0 3px var(--color-navy-light);
+}
+
+.inventory-add-row .btn {
+  padding: 8px 14px;
+  font-size: 18px;
+  line-height: 1;
+  min-width: 40px;
+}
+
+.inventory-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.inventory-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 7px 0;
+  border-bottom: 1px solid var(--color-border);
+  font-size: 14px;
+  color: var(--color-text);
+}
+
+.inventory-item:last-child {
+  border-bottom: none;
+}
+
+.inventory-item-name {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.inventory-item-controls {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.inventory-qty {
+  width: 70px;
+  padding: 4px 8px;
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  font-size: 13px;
+  font-family: var(--font);
+  text-align: center;
+  background: #ffffff;
+  color: var(--color-text);
+  transition: border-color 0.15s;
+}
+
+.inventory-qty:focus {
+  outline: none;
+  border-color: var(--color-navy);
+  box-shadow: 0 0 0 2px var(--color-navy-light);
+}
+
+.inventory-remove {
+  background: none;
+  border: none;
+  color: var(--color-error);
+  font-size: 18px;
+  cursor: pointer;
+  padding: 0 4px;
+  line-height: 1;
+  opacity: 0.5;
+  transition: opacity 0.15s;
+}
+
+.inventory-remove:hover {
+  opacity: 1;
+}
+
+.inventory-empty {
+  font-size: 13px;
+  color: var(--color-text-muted);
+  font-style: italic;
+  padding: 8px 0;
+}
+
 /* ===== EDITABLE SECTION VARIANTS ===== */
 .hero-editable-section {
   margin-bottom: 4px;
