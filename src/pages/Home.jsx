@@ -5,7 +5,7 @@ import EditableSections from '../components/EditableSections';
 const DEFAULT_SECTIONS = [
   {
     title: '',
-    body: 'Consistent food delivery service Sunday through Friday.',
+    body: 'Consistent breakfast, lunch, and dinner delivery service Sunday through Friday.',
   },
   {
     title: '',
