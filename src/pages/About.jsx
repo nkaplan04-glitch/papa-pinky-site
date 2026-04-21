@@ -15,7 +15,7 @@ const DEFAULT_SECTIONS = [
   },
   {
     title: 'How It Works',
-    body: 'Each house logs in, picks meals for the next day, and submits before the cutoff. Chef Roger takes care of everything from shopping to cooking to delivery coordination. It\'s that simple.',
+    body: 'Each house logs in, picks meals for any day using the calendar, and submits their order. Chef Roger takes care of everything from shopping to cooking to delivery coordination. It\'s that simple.',
   },
 ];
 

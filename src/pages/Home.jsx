@@ -9,7 +9,7 @@ const DEFAULT_SECTIONS = [
   },
   {
     title: '',
-    body: 'Chef Roger Urso handles daily meal planning and cooking for fraternity houses at the University of Michigan. No more messy spreadsheets — just pick your meals, submit before the cutoff, and we take care of the rest.',
+    body: 'Chef Roger Urso handles daily meal planning and cooking for fraternity houses at the University of Michigan. No more messy spreadsheets — just pick your meals and submit. We take care of the rest.',
   },
 ];
 
@@ -20,11 +20,11 @@ const DEFAULT_STEPS = [
   },
   {
     title: 'Pick Your Meals',
-    body: 'Choose 2 breakfast items, 1 lunch, and 1 dinner from the daily menu for the next day.',
+    body: 'Choose 2 breakfast items, 1 lunch, and 1 dinner from the daily menu using the ordering calendar.',
   },
   {
-    title: 'Submit Before 3:30 AM',
-    body: 'Lock in your selections before the cutoff. Chef Roger handles the rest.',
+    title: 'Submit Your Order',
+    body: 'Confirm your selections for any day using the calendar. Chef Roger handles the rest.',
   },
 ];
 

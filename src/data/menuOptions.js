@@ -9,5 +9,3 @@ export const TAG_LEGEND = {
   F:  { label: 'Contains Fish/Seafood', short: 'F' },
   S:  { label: 'Contains Soy', short: 'S' },
 };
-
-export const BREAKFAST_NOTE = 'All breakfast options come with fruit and orange juice.';

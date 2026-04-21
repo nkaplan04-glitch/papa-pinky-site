@@ -1292,13 +1292,6 @@ img {
   border-bottom: 2px solid var(--color-navy);
 }
 
-.menu-section-note {
-  font-size: 14px;
-  color: var(--color-red-soft);
-  font-style: italic;
-  margin-bottom: 16px;
-}
-
 .menu-items {
   display: flex;
   flex-direction: column;
@@ -2367,4 +2360,248 @@ img {
     flex-direction: column;
     align-items: flex-start;
   }
+
+  .calendar-grid {
+    gap: 4px;
+  }
+
+  .calendar-cell {
+    min-height: 44px;
+    font-size: 13px;
+  }
+
+  .day-order-form {
+    margin: 16px 0;
+    padding: 16px;
+  }
+}
+
+/* ===== Calendar ===== */
+.order-calendar {
+  background: var(--card-bg, #fff);
+  border-radius: 16px;
+  padding: 24px;
+  margin: 20px 0;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+}
+
+.calendar-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+
+.calendar-month {
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--text-primary, #1a1a2e);
+}
+
+.calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 6px;
+}
+
+.calendar-day-label {
+  text-align: center;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--text-secondary, #6b7280);
+  text-transform: uppercase;
+  padding: 6px 0;
+}
+
+.calendar-cell {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 52px;
+  border: 2px solid transparent;
+  border-radius: 10px;
+  background: var(--bg-light, #f9fafb);
+  cursor: pointer;
+  transition: all 0.15s ease;
+  padding: 4px;
+}
+
+.calendar-cell.empty {
+  background: transparent;
+  cursor: default;
+}
+
+.calendar-cell:not(.empty):hover {
+  border-color: var(--accent, #e74c3c);
+  background: #fff;
+}
+
+.calendar-cell.today {
+  border-color: var(--accent, #e74c3c);
+  background: rgba(231, 76, 60, 0.06);
+}
+
+.calendar-cell.selected {
+  background: var(--accent, #e74c3c);
+  color: #fff;
+  border-color: var(--accent, #e74c3c);
+}
+
+.calendar-cell.selected .calendar-day-num {
+  color: #fff;
+}
+
+.calendar-day-num {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--text-primary, #1a1a2e);
+}
+
+.calendar-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #22c55e;
+  margin-top: 2px;
+}
+
+.calendar-cell.selected .calendar-dot {
+  background: #fff;
+}
+
+/* Day order form */
+.day-order-form {
+  background: var(--card-bg, #fff);
+  border-radius: 16px;
+  padding: 28px;
+  margin: 20px 0;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+  animation: slideDown 0.2s ease;
+}
+
+@keyframes slideDown {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.day-order-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+  padding-bottom: 12px;
+  border-bottom: 2px solid var(--border-light, #e5e7eb);
+}
+
+.day-order-header h3 {
+  margin: 0;
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--text-primary, #1a1a2e);
+}
+
+/* Meal tracker (block plans) */
+.meal-tracker-banner {
+  margin-top: 16px;
+  padding: 16px 20px;
+  background: linear-gradient(135deg, #fff 0%, #f9fafb 100%);
+  border: 2px solid #22c55e;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(34, 197, 94, 0.1);
+}
+
+.meal-tracker-banner.meal-tracker-low {
+  border-color: #f59e0b;
+  box-shadow: 0 2px 8px rgba(245, 158, 11, 0.15);
+}
+
+.meal-tracker-banner.meal-tracker-full {
+  border-color: #ef4444;
+  box-shadow: 0 2px 8px rgba(239, 68, 68, 0.15);
+}
+
+.meal-tracker-bar-wrap {
+  width: 100%;
+  height: 10px;
+  background: #e5e7eb;
+  border-radius: 999px;
+  overflow: hidden;
+  margin-bottom: 10px;
+}
+
+.meal-tracker-bar {
+  height: 100%;
+  background: #22c55e;
+  border-radius: 999px;
+  transition: width 0.3s ease;
+}
+
+.meal-tracker-low .meal-tracker-bar {
+  background: #f59e0b;
+}
+
+.meal-tracker-full .meal-tracker-bar {
+  background: #ef4444;
+}
+
+.meal-tracker-text {
+  font-size: 0.95rem;
+  color: #1f2937;
+}
+
+.meal-tracker-remaining {
+  color: #6b7280;
+}
+
+.meal-tracker-full .meal-tracker-remaining {
+  color: #ef4444;
+  font-weight: 600;
+}
+
+/* Inline meal tracker (chef houses list) */
+.meal-tracker {
+  display: inline-block;
+  font-size: 0.85rem;
+  color: #15803d;
+  font-weight: 600;
+  margin-top: 4px;
+}
+
+.meal-tracker.meal-tracker-low {
+  color: #b45309;
+}
+
+.meal-tracker.meal-tracker-full {
+  color: #b91c1c;
+}
+
+/* Chef date picker */
+.chef-date-picker {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+
+.chef-date-picker label {
+  font-weight: 600;
+  font-size: 1rem;
+  color: var(--text-primary, #1a1a2e);
+}
+
+.chef-date-picker input[type="date"] {
+  padding: 8px 12px;
+  border: 2px solid var(--border-light, #e5e7eb);
+  border-radius: 8px;
+  font-size: 0.95rem;
+  font-family: inherit;
+}
+
+.chef-date-display {
+  color: var(--text-secondary, #6b7280);
+  font-size: 0.95rem;
 }

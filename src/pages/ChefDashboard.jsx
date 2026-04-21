@@ -3,9 +3,11 @@ import {
   loadAllHouses, loadAllSubmissions, deleteHouse,
   loadAllMenuItems, addMenuItem, updateMenuItem, deleteMenuItem,
   loadSuggestions, updateSuggestionStatus, clearReviewedSuggestions,
-  loadSiteContent, saveSiteContent,
+  loadSiteContent, saveSiteContent, loadHouseSubmissions,
 } from '../utils/storage';
 import { createHouseAccount } from '../utils/auth';
+import { toDateString } from '../utils/dates';
+import { PLANS, DEFAULT_PLAN, getPlan, isBlockPlan, countMealsInSubmission } from '../utils/mealPlans';
 import { TAG_LEGEND } from '../data/menuOptions';
 import SummaryCard from '../components/SummaryCard';
 
@@ -22,6 +24,7 @@ const DEFAULT_INVENTORY = {
 
 export default function ChefDashboard() {
   const [activeTab, setActiveTab] = useState('orders');
+  const [orderDate, setOrderDate] = useState(toDateString(new Date()));
 
   const [houses, setHouses] = useState([]);
   const [submissions, setSubmissions] = useState({});
@@ -46,9 +49,13 @@ export default function ChefDashboard() {
   const [formPassword, setFormPassword] = useState('');
   const [formPasswordConfirm, setFormPasswordConfirm] = useState('');
   const [formHeadcount, setFormHeadcount] = useState('');
+  const [formMealPlan, setFormMealPlan] = useState(DEFAULT_PLAN);
   const [formError, setFormError] = useState('');
   const [formSuccess, setFormSuccess] = useState('');
   const [formLoading, setFormLoading] = useState(false);
+
+  // Per-house total meal usage (for block plans)
+  const [houseUsage, setHouseUsage] = useState({});
 
   // Menu item form
   const [showMenuForm, setShowMenuForm] = useState(false);
@@ -76,7 +83,7 @@ export default function ChefDashboard() {
     try {
       const [allHouses, allSubs, allMenu, allSuggestions] = await Promise.all([
         loadAllHouses(),
-        loadAllSubmissions(),
+        loadAllSubmissions(new Date(orderDate + 'T12:00:00')),
         loadAllMenuItems(),
         loadSuggestions(),
       ]);
@@ -84,6 +91,7 @@ export default function ChefDashboard() {
       setSubmissions(allSubs);
       setMenuItems(allMenu);
       setSuggestions(allSuggestions);
+      await loadUsageForBlockHouses(allHouses);
     } catch (err) {
       console.error('Failed to load chef dashboard:', err);
       setLoadError('Failed to load dashboard data. Please refresh the page.');
@@ -92,7 +100,31 @@ export default function ChefDashboard() {
     }
   }
 
-  useEffect(() => { loadData(); }, []);
+  async function loadUsageForBlockHouses(allHouses) {
+    const blockHouses = allHouses.filter((h) => isBlockPlan(h.meal_plan));
+    if (blockHouses.length === 0) {
+      setHouseUsage({});
+      return;
+    }
+    try {
+      const results = await Promise.all(
+        blockHouses.map(async (h) => {
+          const subs = await loadHouseSubmissions(h.id);
+          const used = subs.reduce((sum, s) => sum + countMealsInSubmission({
+            breakfast: s.breakfast,
+            lunch: s.lunch,
+            dinner: s.dinner,
+          }), 0);
+          return [h.id, used];
+        })
+      );
+      setHouseUsage(Object.fromEntries(results));
+    } catch (err) {
+      console.error('Failed to load house usage:', err);
+    }
+  }
+
+  useEffect(() => { loadData(); }, [orderDate]);
 
   // ===== House Account Creation =====
   async function handleCreateAccount(e) {
@@ -128,6 +160,7 @@ export default function ChefDashboard() {
         password: formPassword,
         houseName: formHouseName.trim(),
         headcount: parseInt(formHeadcount, 10),
+        mealPlan: formMealPlan,
       });
       setFormSuccess(`Account created for ${formHouseName.trim()}. Send them their login credentials.`);
       setFormHouseName('');
@@ -136,6 +169,7 @@ export default function ChefDashboard() {
       setFormPassword('');
       setFormPasswordConfirm('');
       setFormHeadcount('');
+      setFormMealPlan(DEFAULT_PLAN);
       await loadData();
     } catch (err) {
       setFormError(err.message || 'Failed to create account.');
@@ -389,9 +423,7 @@ export default function ChefDashboard() {
     return sum + (sub?.dailyHeadcount || 0);
   }, 0);
 
-  const tomorrow = new Date();
-  tomorrow.setDate(tomorrow.getDate() + 1);
-  const dateString = tomorrow.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' });
+  const displayDate = new Date(orderDate + 'T12:00:00').toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' });
 
   const breakfastMenuItems = menuItems.filter((i) => i.category === 'breakfast');
   const lunchDinnerMenuItems = menuItems.filter((i) => i.category === 'lunch_dinner');
@@ -442,7 +474,16 @@ export default function ChefDashboard() {
       {/* ===== ORDERS TAB ===== */}
       {activeTab === 'orders' && (
         <>
-          <p className="dashboard-date">Orders for {dateString}</p>
+          <div className="chef-date-picker">
+            <label htmlFor="order-date">Orders for:</label>
+            <input
+              id="order-date"
+              type="date"
+              value={orderDate}
+              onChange={(e) => setOrderDate(e.target.value)}
+            />
+            <span className="chef-date-display">{displayDate}</span>
+          </div>
 
           <div className="create-account-section">
             <div className="create-account-header">
@@ -465,6 +506,16 @@ export default function ChefDashboard() {
                   <div className="form-group">
                     <label htmlFor="ca-headcount">Headcount</label>
                     <input id="ca-headcount" type="number" min="1" placeholder="e.g. 30" value={formHeadcount} onChange={(e) => setFormHeadcount(e.target.value)} required />
+                  </div>
+                </div>
+                <div className="form-row">
+                  <div className="form-group">
+                    <label htmlFor="ca-plan">Meal Plan</label>
+                    <select id="ca-plan" value={formMealPlan} onChange={(e) => setFormMealPlan(e.target.value)} required>
+                      {Object.values(PLANS).map((p) => (
+                        <option key={p.id} value={p.id}>{p.label}</option>
+                      ))}
+                    </select>
                   </div>
                 </div>
                 <div className="form-row">
@@ -497,17 +548,29 @@ export default function ChefDashboard() {
 
             {houses.length > 0 && (
               <div className="house-list">
-                {houses.map((house) => (
-                  <div key={house.id} className="house-list-item">
-                    <div className="house-list-info">
-                      <strong>{house.house_name}</strong>
-                      <span>{house.headcount} people on meal plan</span>
+                {houses.map((house) => {
+                  const plan = getPlan(house.meal_plan);
+                  const isBlock = isBlockPlan(house.meal_plan);
+                  const used = houseUsage[house.id] || 0;
+                  const remaining = isBlock ? Math.max(0, plan.cap - used) : null;
+                  const overLimit = isBlock && used >= plan.cap;
+                  return (
+                    <div key={house.id} className="house-list-item">
+                      <div className="house-list-info">
+                        <strong>{house.house_name}</strong>
+                        <span>{house.headcount} people · {plan.shortLabel}</span>
+                        {isBlock && (
+                          <span className={`meal-tracker ${overLimit ? 'meal-tracker-full' : remaining <= 5 ? 'meal-tracker-low' : ''}`}>
+                            {used}/{plan.cap} meals used · {remaining} left
+                          </span>
+                        )}
+                      </div>
+                      <button className="btn-reject" onClick={() => handleDeleteHouse(house.id, house.house_name)}>
+                        Remove
+                      </button>
                     </div>
-                    <button className="btn-reject" onClick={() => handleDeleteHouse(house.id, house.house_name)}>
-                      Remove
-                    </button>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             )}
           </div>
@@ -538,6 +601,7 @@ export default function ChefDashboard() {
                 house={{ id: house.id, name: house.house_name }}
                 submission={submissions[house.id] || null}
                 headcount={house.headcount}
+                planLabel={getPlan(house.meal_plan).shortLabel}
               />
             ))}
             {houses.length === 0 && (

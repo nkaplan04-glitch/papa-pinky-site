@@ -7,7 +7,7 @@ const DEFAULT_SECTIONS = [
   },
   {
     title: 'Meal Selection Responsibility',
-    body: 'It is the responsibility of the account holders to submit their meal selection before the cutoff time to ensure timely delivery for the next day. Big Papa Pinky does not choose your meals; however, if you\'d like Big Papa Pinky to put a meal rotation together for your house, we can do that as well to make it stress free.',
+    body: 'It is the responsibility of the account holders to submit their meal selections to ensure timely delivery. Big Papa Pinky does not choose your meals; however, if you\'d like Big Papa Pinky to put a meal rotation together for your house, we can do that as well to make it stress free.',
   },
   {
     title: 'Refund Policy',

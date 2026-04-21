@@ -7,6 +7,7 @@ create table profiles (
   headcount integer not null default 0,
   role text not null default 'house' check (role in ('house', 'chef')),
   approved boolean not null default false,
+  meal_plan text not null default 'bld_semester' check (meal_plan in ('bld_semester', 'ld_semester', 'd_semester', 'block_55', 'block_80', 'block_125')),
   created_at timestamptz not null default now()
 );
 
@@ -40,13 +41,14 @@ create policy "Allow all on submissions" on submissions for all using (true) wit
 create or replace function public.handle_new_user()
 returns trigger as $$
 begin
-  insert into public.profiles (id, house_name, headcount, role, approved)
+  insert into public.profiles (id, house_name, headcount, role, approved, meal_plan)
   values (
     new.id,
     coalesce(new.raw_user_meta_data->>'house_name', 'Unknown'),
     coalesce((new.raw_user_meta_data->>'headcount')::integer, 0),
     coalesce(new.raw_user_meta_data->>'role', 'house'),
-    false
+    false,
+    coalesce(new.raw_user_meta_data->>'meal_plan', 'bld_semester')
   );
   return new;
 end;

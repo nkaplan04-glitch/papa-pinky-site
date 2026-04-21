@@ -1,13 +1,8 @@
 import { supabase } from './supabase';
+import { toDateString } from './dates';
 
-function getOrderDate() {
-  const tomorrow = new Date();
-  tomorrow.setDate(tomorrow.getDate() + 1);
-  return tomorrow.toISOString().split('T')[0];
-}
-
-export async function loadSubmission(houseId) {
-  const orderDate = getOrderDate();
+export async function loadSubmission(houseId, date) {
+  const orderDate = toDateString(date);
   const { data, error } = await supabase
     .from('submissions')
     .select('*')
@@ -19,8 +14,8 @@ export async function loadSubmission(houseId) {
   return data || null;
 }
 
-export async function saveSubmission(houseId, submission) {
-  const orderDate = getOrderDate();
+export async function saveSubmission(houseId, date, submission) {
+  const orderDate = toDateString(date);
   const row = {
     house_id: houseId,
     order_date: orderDate,
@@ -45,8 +40,34 @@ export async function saveSubmission(houseId, submission) {
   return data;
 }
 
-export async function loadAllSubmissions() {
-  const orderDate = getOrderDate();
+export async function loadSubmissionsForMonth(houseId, year, month) {
+  const startDate = `${year}-${String(month + 1).padStart(2, '0')}-01`;
+  const endDate = new Date(year, month + 1, 0);
+  const endStr = toDateString(endDate);
+
+  const { data, error } = await supabase
+    .from('submissions')
+    .select('order_date')
+    .eq('house_id', houseId)
+    .gte('order_date', startDate)
+    .lte('order_date', endStr);
+
+  if (error) throw error;
+  return (data || []).map((r) => r.order_date);
+}
+
+export async function loadHouseSubmissions(houseId) {
+  const { data, error } = await supabase
+    .from('submissions')
+    .select('*')
+    .eq('house_id', houseId);
+
+  if (error) throw error;
+  return data || [];
+}
+
+export async function loadAllSubmissions(date) {
+  const orderDate = toDateString(date);
   const { data, error } = await supabase
     .from('submissions')
     .select('*')
