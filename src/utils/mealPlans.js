@@ -1,12 +1,4 @@
 export const PLANS = {
-  bld_semester: {
-    id: 'bld_semester',
-    label: 'Breakfast, Lunch & Dinner (Semester)',
-    shortLabel: 'BLD Semester',
-    meals: ['breakfast', 'lunch', 'dinner'],
-    cap: null,
-    type: 'semester',
-  },
   ld_semester: {
     id: 'ld_semester',
     label: 'Lunch & Dinner (Semester)',
@@ -27,7 +19,7 @@ export const PLANS = {
     id: 'block_55',
     label: '55 Meal Block',
     shortLabel: '55 Block',
-    meals: ['breakfast', 'lunch', 'dinner'],
+    meals: ['lunch', 'dinner'],
     cap: 55,
     type: 'block',
   },
@@ -35,7 +27,7 @@ export const PLANS = {
     id: 'block_80',
     label: '80 Meal Block',
     shortLabel: '80 Block',
-    meals: ['breakfast', 'lunch', 'dinner'],
+    meals: ['lunch', 'dinner'],
     cap: 80,
     type: 'block',
   },
@@ -43,13 +35,13 @@ export const PLANS = {
     id: 'block_125',
     label: '125 Meal Block',
     shortLabel: '125 Block',
-    meals: ['breakfast', 'lunch', 'dinner'],
+    meals: ['lunch', 'dinner'],
     cap: 125,
     type: 'block',
   },
 };
 
-export const DEFAULT_PLAN = 'bld_semester';
+export const DEFAULT_PLAN = 'ld_semester';
 
 export function getPlan(planId) {
   return PLANS[planId] || PLANS[DEFAULT_PLAN];
@@ -68,12 +60,10 @@ export function getMealCap(planId) {
 }
 
 // Counts the number of meal slots in a saved/in-progress submission.
-// Each filled meal type (breakfast with items, lunch chosen, dinner chosen) counts as 1.
+// Each filled meal type (lunch chosen, dinner chosen) counts as 1.
 export function countMealsInSubmission(submission) {
   if (!submission) return 0;
   let count = 0;
-  const breakfast = submission.breakfast ?? [];
-  if (Array.isArray(breakfast) && breakfast.length > 0) count += 1;
   if (submission.lunch) count += 1;
   if (submission.dinner) count += 1;
   return count;

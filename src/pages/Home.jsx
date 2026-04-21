@@ -5,7 +5,7 @@ import EditableSections from '../components/EditableSections';
 const DEFAULT_SECTIONS = [
   {
     title: '',
-    body: 'Consistent breakfast, lunch, and dinner delivery service Sunday through Friday.',
+    body: 'Consistent lunch and dinner delivery service Sunday through Friday.',
   },
   {
     title: '',
@@ -20,7 +20,7 @@ const DEFAULT_STEPS = [
   },
   {
     title: 'Pick Your Meals',
-    body: 'Choose 2 breakfast items, 1 lunch, and 1 dinner from the daily menu using the ordering calendar.',
+    body: 'Choose 1 lunch and 1 dinner from the daily menu using the ordering calendar.',
   },
   {
     title: 'Submit Your Order',

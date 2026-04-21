@@ -19,10 +19,10 @@ export async function saveSubmission(houseId, date, submission) {
   const row = {
     house_id: houseId,
     order_date: orderDate,
-    breakfast: submission.breakfast,
+    breakfast: [],
     lunch: submission.lunch,
     dinner: submission.dinner,
-    breakfast_time: submission.breakfastTime,
+    breakfast_time: null,
     lunch_time: submission.lunchTime,
     dinner_time: submission.dinnerTime,
     daily_headcount: submission.dailyHeadcount,
@@ -78,10 +78,8 @@ export async function loadAllSubmissions(date) {
   const byHouse = {};
   for (const row of data) {
     byHouse[row.house_id] = {
-      breakfast: row.breakfast || [],
       lunch: row.lunch,
       dinner: row.dinner,
-      breakfastTime: row.breakfast_time,
       lunchTime: row.lunch_time,
       dinnerTime: row.dinner_time,
       dailyHeadcount: row.daily_headcount,

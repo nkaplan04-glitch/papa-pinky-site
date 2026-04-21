@@ -3,7 +3,7 @@ import EditableSections from '../components/EditableSections';
 const DEFAULT_SECTIONS = [
   {
     title: 'Meet Chef Roger Urso',
-    body: 'Chef Roger Urso is a personal chef based at the University of Michigan, cooking daily meals for fraternity houses across campus. With a hands-on approach and a real passion for feeding people well, Roger brings restaurant-quality food directly to the house — breakfast, lunch, and dinner.',
+    body: 'Chef Roger Urso is a personal chef based at the University of Michigan, cooking daily meals for fraternity houses across campus. With a hands-on approach and a real passion for feeding people well, Roger brings restaurant-quality food directly to the house — lunch and dinner.',
   },
   {
     title: 'Experience',

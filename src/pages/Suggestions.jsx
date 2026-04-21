@@ -3,7 +3,6 @@ import { useAuth } from '../hooks/useAuth';
 import { submitSuggestion, loadHouseSuggestions } from '../utils/storage';
 
 const CATEGORIES = [
-  { value: 'breakfast', label: 'Breakfast' },
   { value: 'lunch_dinner', label: 'Lunch / Dinner' },
   { value: 'general', label: 'General' },
 ];

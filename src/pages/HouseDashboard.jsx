@@ -7,7 +7,6 @@ import { getPlan, isBlockPlan, countMealsInSubmission } from '../utils/mealPlans
 import SelectionSection from '../components/SelectionSection';
 
 const TIME_OPTIONS = {
-  breakfast: ['7:00 AM', '7:30 AM', '8:00 AM', '8:30 AM', '9:00 AM', '9:30 AM', '10:00 AM', '10:30 AM', '11:00 AM'],
   lunch: ['11:00 AM', '11:30 AM', '12:00 PM', '12:30 PM', '1:00 PM', '1:30 PM', '2:00 PM'],
   dinner: ['5:00 PM', '5:30 PM', '6:00 PM', '6:30 PM', '7:00 PM', '7:30 PM', '8:00 PM', '8:30 PM'],
 };
@@ -16,7 +15,6 @@ const DAY_LABELS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
 export default function HouseDashboard() {
   const [user, setUser] = useState(null);
-  const [breakfastOptions, setBreakfastOptions] = useState([]);
   const [lunchDinnerOptions, setLunchDinnerOptions] = useState([]);
   const [loading, setLoading] = useState(true);
   const [loadError, setLoadError] = useState('');
@@ -35,10 +33,8 @@ export default function HouseDashboard() {
   const selectionTokenRef = useRef(0);
 
   // Order form for selected day
-  const [breakfast, setBreakfast] = useState([]);
   const [lunch, setLunch] = useState(null);
   const [dinner, setDinner] = useState(null);
-  const [breakfastTime, setBreakfastTime] = useState('');
   const [lunchTime, setLunchTime] = useState('');
   const [dinnerTime, setDinnerTime] = useState('');
   const [dailyHeadcount, setDailyHeadcount] = useState('');
@@ -57,7 +53,6 @@ export default function HouseDashboard() {
         if (!currentUser) return;
         setUser(currentUser);
         setDailyHeadcount(String(currentUser.headcount || ''));
-        setBreakfastOptions(menuItems.filter((i) => i.category === 'breakfast'));
         setLunchDinnerOptions(menuItems.filter((i) => i.category === 'lunch_dinner'));
       } catch (err) {
         console.error('Failed to load dashboard:', err);
@@ -94,7 +89,6 @@ export default function HouseDashboard() {
     try {
       const subs = await loadHouseSubmissions(user.id);
       const total = subs.reduce((sum, s) => sum + countMealsInSubmission({
-        breakfast: s.breakfast,
         lunch: s.lunch,
         dinner: s.dinner,
       }), 0);
@@ -115,10 +109,8 @@ export default function HouseDashboard() {
       const existing = await loadSubmission(user.id, date);
       if (token !== selectionTokenRef.current) return;
       if (existing) {
-        setBreakfast(existing.breakfast || []);
         setLunch(existing.lunch || null);
         setDinner(existing.dinner || null);
-        setBreakfastTime(existing.breakfast_time || '');
         setLunchTime(existing.lunch_time || '');
         setDinnerTime(existing.dinner_time || '');
         if (existing.daily_headcount) {
@@ -129,15 +121,12 @@ export default function HouseDashboard() {
         setNotes(existing.notes || '');
         setSaved(true);
         setOriginalDayCount(countMealsInSubmission({
-          breakfast: existing.breakfast,
           lunch: existing.lunch,
           dinner: existing.dinner,
         }));
       } else {
-        setBreakfast([]);
         setLunch(null);
         setDinner(null);
-        setBreakfastTime('');
         setLunchTime('');
         setDinnerTime('');
         setDailyHeadcount(String(user.headcount || ''));
@@ -156,7 +145,7 @@ export default function HouseDashboard() {
 
   async function handleSubmit() {
     const validationErrors = validateSelections(user.mealPlan, {
-      breakfast, lunch, dinner, breakfastTime, lunchTime, dinnerTime,
+      lunch, dinner, lunchTime, dinnerTime,
     });
     if (!dailyHeadcount || parseInt(dailyHeadcount, 10) < 1) {
       validationErrors.push('Please enter how many people are eating.');
@@ -164,7 +153,7 @@ export default function HouseDashboard() {
 
     // Block-plan cap enforcement
     if (isBlockPlan(user.mealPlan)) {
-      const newDayCount = countMealsInSubmission({ breakfast, lunch, dinner });
+      const newDayCount = countMealsInSubmission({ lunch, dinner });
       const projectedTotal = totalUsed - originalDayCount + newDayCount;
       const cap = plan.cap;
       if (projectedTotal > cap) {
@@ -185,17 +174,15 @@ export default function HouseDashboard() {
 
     try {
       await saveSubmission(user.id, selectedDate, {
-        breakfast,
         lunch,
         dinner,
-        breakfastTime,
         lunchTime,
         dinnerTime,
         dailyHeadcount: parseInt(dailyHeadcount, 10),
         notes: notes.trim(),
       });
       setSaved(true);
-      const savedCount = countMealsInSubmission({ breakfast, lunch, dinner });
+      const savedCount = countMealsInSubmission({ lunch, dinner });
       setOriginalDayCount(savedCount);
       await loadMonthSubmissions();
       if (isBlockPlan(user.mealPlan)) await loadTotalUsage();
@@ -253,7 +240,6 @@ export default function HouseDashboard() {
     : '';
 
   const plan = getPlan(user?.mealPlan);
-  const showBreakfast = plan.meals.includes('breakfast');
   const showLunch = plan.meals.includes('lunch');
   const showDinner = plan.meals.includes('dinner');
   const isBlock = plan.type === 'block';
@@ -337,31 +323,6 @@ export default function HouseDashboard() {
                   />
                 </div>
               </div>
-
-              {showBreakfast && (
-                <>
-                  <SelectionSection
-                    title={isBlock ? 'Breakfast (optional)' : 'Breakfast'}
-                    options={breakfastOptions}
-                    selected={breakfast}
-                    onChange={setBreakfast}
-                    maxSelections={2}
-                  />
-                  <div className="delivery-time">
-                    <label htmlFor="breakfast-time">Breakfast delivery time</label>
-                    <select
-                      id="breakfast-time"
-                      value={breakfastTime}
-                      onChange={(e) => setBreakfastTime(e.target.value)}
-                    >
-                      <option value="">Select a time</option>
-                      {TIME_OPTIONS.breakfast.map((t) => (
-                        <option key={t} value={t}>{t}</option>
-                      ))}
-                    </select>
-                  </div>
-                </>
-              )}
 
               {showLunch && (
                 <>

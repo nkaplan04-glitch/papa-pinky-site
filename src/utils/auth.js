@@ -17,7 +17,7 @@ export async function createHouseAccount({ email, password, houseName, headcount
         house_name: houseName,
         headcount: headcount,
         role: 'house',
-        meal_plan: mealPlan || 'bld_semester',
+        meal_plan: mealPlan || 'ld_semester',
       },
     },
   });
@@ -26,7 +26,7 @@ export async function createHouseAccount({ email, password, houseName, headcount
   if (data.user) {
     const { error: approveError } = await supabase
       .from('profiles')
-      .update({ approved: true, meal_plan: mealPlan || 'bld_semester' })
+      .update({ approved: true, meal_plan: mealPlan || 'ld_semester' })
       .eq('id', data.user.id);
     if (approveError) throw approveError;
   }
@@ -67,7 +67,7 @@ export async function getCurrentUser() {
     headcount: profile.headcount,
     role: profile.role,
     approved: profile.approved,
-    mealPlan: profile.meal_plan || 'bld_semester',
+    mealPlan: profile.meal_plan || 'ld_semester',
   };
 }
 

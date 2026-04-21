@@ -6,7 +6,6 @@ const DIET_FILTERS = ['V', 'VG', 'K'];
 
 export default function Menu() {
   const [activeFilter, setActiveFilter] = useState(null);
-  const [breakfastItems, setBreakfastItems] = useState([]);
   const [lunchDinnerItems, setLunchDinnerItems] = useState([]);
   const [loading, setLoading] = useState(true);
   const [loadError, setLoadError] = useState('');
@@ -15,7 +14,6 @@ export default function Menu() {
     async function load() {
       try {
         const items = await loadMenuItems();
-        setBreakfastItems(items.filter((i) => i.category === 'breakfast'));
         setLunchDinnerItems(items.filter((i) => i.category === 'lunch_dinner'));
       } catch (err) {
         console.error('Failed to load menu:', err);
@@ -32,7 +30,6 @@ export default function Menu() {
     return item.tags.includes(activeFilter);
   }
 
-  const filteredBreakfast = breakfastItems.filter(matchesFilter);
   const filteredLunchDinner = lunchDinnerItems.filter(matchesFilter);
 
   if (loading) {
@@ -84,28 +81,6 @@ export default function Menu() {
           </button>
         )}
       </div>
-
-      <section className="menu-section">
-        <h2>Breakfast</h2>
-        {filteredBreakfast.length > 0 ? (
-          <div className="menu-items">
-            {filteredBreakfast.map((item) => (
-              <div key={item.id} className="menu-item">
-                <span className="menu-item-name">{item.name}</span>
-                <span className="menu-item-tags">
-                  {item.tags.map((tag) => (
-                    <span key={tag} className={`tag tag-${tag.toLowerCase()}`} title={TAG_LEGEND[tag]?.label}>
-                      {tag}
-                    </span>
-                  ))}
-                </span>
-              </div>
-            ))}
-          </div>
-        ) : (
-          <p className="menu-empty">No breakfast items match this filter.</p>
-        )}
-      </section>
 
       <section className="menu-section">
         <h2>Lunch / Dinner</h2>

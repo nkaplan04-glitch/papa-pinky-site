@@ -7,7 +7,7 @@ create table profiles (
   headcount integer not null default 0,
   role text not null default 'house' check (role in ('house', 'chef')),
   approved boolean not null default false,
-  meal_plan text not null default 'bld_semester' check (meal_plan in ('bld_semester', 'ld_semester', 'd_semester', 'block_55', 'block_80', 'block_125')),
+  meal_plan text not null default 'ld_semester' check (meal_plan in ('ld_semester', 'd_semester', 'block_55', 'block_80', 'block_125')),
   created_at timestamptz not null default now()
 );
 
@@ -48,7 +48,7 @@ begin
     coalesce((new.raw_user_meta_data->>'headcount')::integer, 0),
     coalesce(new.raw_user_meta_data->>'role', 'house'),
     false,
-    coalesce(new.raw_user_meta_data->>'meal_plan', 'bld_semester')
+    coalesce(new.raw_user_meta_data->>'meal_plan', 'ld_semester')
   );
   return new;
 end;
@@ -62,7 +62,7 @@ create trigger on_auth_user_created
 create table menu_items (
   id uuid primary key default gen_random_uuid(),
   name text not null,
-  category text not null check (category in ('breakfast', 'lunch_dinner')),
+  category text not null check (category in ('lunch_dinner')),
   tags text[] not null default '{}',
   active boolean not null default true,
   created_at timestamptz not null default now()
@@ -76,22 +76,13 @@ create table suggestions (
   id uuid primary key default gen_random_uuid(),
   house_id uuid not null references profiles(id) on delete cascade,
   suggestion_text text not null,
-  category text not null default 'general' check (category in ('breakfast', 'lunch_dinner', 'general')),
+  category text not null default 'general' check (category in ('lunch_dinner', 'general')),
   status text not null default 'pending' check (status in ('pending', 'approved', 'dismissed')),
   created_at timestamptz not null default now()
 );
 
 alter table suggestions enable row level security;
 create policy "Allow all on suggestions" on suggestions for all using (true) with check (true);
-
--- Seed breakfast menu items
-INSERT INTO menu_items (name, category, tags) VALUES
-('Breakfast quesadillas with eggs, turkey sausage and shredded cheddar cheese', 'breakfast', ARRAY['G','E','D']),
-('French toast with fresh strawberries and blueberries, syrup, scrambled eggs with turkey sausage patties', 'breakfast', ARRAY['G','E','D']),
-('Sausage/Bacon egg and cheese on a toasted bagel', 'breakfast', ARRAY['G','E','D']),
-('Breakfast with scrambled eggs, bacon, sausage and protein pancakes served with ketchup, syrup and butter', 'breakfast', ARRAY['G','E','D']),
-('Chicken and waffles served with syrup', 'breakfast', ARRAY['G','E','D']),
-('Bagel with lox and cream cheese', 'breakfast', ARRAY['G','F','D']);
 
 -- Seed lunch/dinner menu items
 INSERT INTO menu_items (name, category, tags) VALUES

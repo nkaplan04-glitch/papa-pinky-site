@@ -111,7 +111,6 @@ export default function ChefDashboard() {
         blockHouses.map(async (h) => {
           const subs = await loadHouseSubmissions(h.id);
           const used = subs.reduce((sum, s) => sum + countMealsInSubmission({
-            breakfast: s.breakfast,
             lunch: s.lunch,
             dinner: s.dinner,
           }), 0);
@@ -266,7 +265,7 @@ export default function ChefDashboard() {
   function startReviewing(suggestion) {
     setReviewingId(suggestion.id);
     setReviewName(suggestion.suggestion_text);
-    setReviewCategory(suggestion.category === 'general' ? 'lunch_dinner' : suggestion.category);
+    setReviewCategory('lunch_dinner');
     setReviewTags([]);
   }
 
@@ -425,7 +424,6 @@ export default function ChefDashboard() {
 
   const displayDate = new Date(orderDate + 'T12:00:00').toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' });
 
-  const breakfastMenuItems = menuItems.filter((i) => i.category === 'breakfast');
   const lunchDinnerMenuItems = menuItems.filter((i) => i.category === 'lunch_dinner');
   const pendingSuggestions = suggestions.filter((s) => s.status === 'pending');
   const reviewedSuggestions = suggestions.filter((s) => s.status !== 'pending');
@@ -638,13 +636,6 @@ export default function ChefDashboard() {
                 />
               </div>
               <div className="form-group">
-                <label htmlFor="mi-category">Category</label>
-                <select id="mi-category" value={menuCategory} onChange={(e) => setMenuCategory(e.target.value)}>
-                  <option value="breakfast">Breakfast</option>
-                  <option value="lunch_dinner">Lunch / Dinner</option>
-                </select>
-              </div>
-              <div className="form-group">
                 <label>Allergen / Dietary Tags</label>
                 <div className="tag-picker">
                   {ALL_TAGS.map((tag) => (
@@ -667,7 +658,6 @@ export default function ChefDashboard() {
           )}
 
           {[
-            { label: 'Breakfast', items: breakfastMenuItems },
             { label: 'Lunch / Dinner', items: lunchDinnerMenuItems },
           ].map((group) => (
             <div className="menu-manage-section" key={group.label}>
@@ -685,13 +675,6 @@ export default function ChefDashboard() {
                               value={editName}
                               onChange={(e) => setEditName(e.target.value)}
                             />
-                          </div>
-                          <div className="form-group">
-                            <label>Category</label>
-                            <select value={editCategory} onChange={(e) => setEditCategory(e.target.value)}>
-                              <option value="breakfast">Breakfast</option>
-                              <option value="lunch_dinner">Lunch / Dinner</option>
-                            </select>
                           </div>
                           <div className="form-group">
                             <label>Tags</label>
@@ -776,13 +759,6 @@ export default function ChefDashboard() {
                           />
                         </div>
                         <div className="form-group">
-                          <label>Category</label>
-                          <select value={reviewCategory} onChange={(e) => setReviewCategory(e.target.value)}>
-                            <option value="breakfast">Breakfast</option>
-                            <option value="lunch_dinner">Lunch / Dinner</option>
-                          </select>
-                        </div>
-                        <div className="form-group">
                           <label>Allergen / Dietary Tags</label>
                           <div className="tag-picker">
                             {ALL_TAGS.map((tag) => (
@@ -814,7 +790,7 @@ export default function ChefDashboard() {
                         <div className="suggestion-review-meta">
                           <span className="suggestion-review-house">{s.profiles?.house_name || 'Unknown'}</span>
                           <span className="suggestion-review-category">
-                            {s.category === 'breakfast' ? 'Breakfast' : s.category === 'lunch_dinner' ? 'Lunch/Dinner' : 'General'}
+                            {s.category === 'lunch_dinner' ? 'Lunch/Dinner' : 'General'}
                           </span>
                           <span className="suggestion-review-date">
                             {new Date(s.created_at).toLocaleDateString()}

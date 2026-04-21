@@ -1,6 +1,5 @@
 export default function SummaryCard({ house, submission, headcount, planLabel }) {
   const hasSubmitted = !!submission;
-  const hasBreakfast = hasSubmitted && Array.isArray(submission.breakfast) && submission.breakfast.length > 0;
   const hasLunch = hasSubmitted && submission.lunch;
   const hasDinner = hasSubmitted && submission.dinner;
 
@@ -24,16 +23,6 @@ export default function SummaryCard({ house, submission, headcount, planLabel })
       </div>
       {hasSubmitted ? (
         <div className="summary-card-body">
-          {hasBreakfast && (
-            <div className="summary-meal">
-              <strong>Breakfast{submission.breakfastTime ? ` — ${submission.breakfastTime}` : ''}</strong>
-              <ul>
-                {submission.breakfast.map((item) => (
-                  <li key={item}>{item}</li>
-                ))}
-              </ul>
-            </div>
-          )}
           {hasLunch && (
             <div className="summary-meal">
               <strong>Lunch{submission.lunchTime ? ` — ${submission.lunchTime}` : ''}</strong>
@@ -46,7 +35,7 @@ export default function SummaryCard({ house, submission, headcount, planLabel })
               <p>{submission.dinner}</p>
             </div>
           )}
-          {!hasBreakfast && !hasLunch && !hasDinner && (
+          {!hasLunch && !hasDinner && (
             <p className="summary-empty">No meals selected.</p>
           )}
           {submission.notes && (
