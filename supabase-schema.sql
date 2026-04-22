@@ -7,7 +7,7 @@ create table profiles (
   headcount integer not null default 0,
   role text not null default 'house' check (role in ('house', 'chef')),
   approved boolean not null default false,
-  meal_plan text not null default 'ld_semester' check (meal_plan in ('ld_semester', 'd_semester', 'block_55', 'block_80', 'block_125')),
+  meal_plan text not null default 'ld_semester' check (meal_plan in ('ld_semester', 'd_semester', 'block_55')),
   created_at timestamptz not null default now()
 );
 
@@ -16,10 +16,8 @@ create table submissions (
   id uuid primary key default gen_random_uuid(),
   house_id uuid not null references profiles(id) on delete cascade,
   order_date date not null default (current_date + interval '1 day')::date,
-  breakfast text[] not null default '{}',
   lunch text,
   dinner text,
-  breakfast_time text,
   lunch_time text,
   dinner_time text,
   daily_headcount integer,
@@ -141,3 +139,13 @@ begin
   delete from auth.users where id = user_id;
 end;
 $$ language plpgsql security definer;
+
+-- ===== Migration: drop legacy breakfast columns and shrink meal_plan options =====
+-- Safe to re-run: each statement uses IF EXISTS / drops-and-readds the constraint.
+alter table submissions drop column if exists breakfast;
+alter table submissions drop column if exists breakfast_time;
+
+alter table profiles drop constraint if exists profiles_meal_plan_check;
+alter table profiles
+  add constraint profiles_meal_plan_check
+  check (meal_plan in ('ld_semester', 'd_semester', 'block_55'));

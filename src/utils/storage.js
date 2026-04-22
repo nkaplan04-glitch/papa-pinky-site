@@ -19,10 +19,8 @@ export async function saveSubmission(houseId, date, submission) {
   const row = {
     house_id: houseId,
     order_date: orderDate,
-    breakfast: [],
     lunch: submission.lunch,
     dinner: submission.dinner,
-    breakfast_time: null,
     lunch_time: submission.lunchTime,
     dinner_time: submission.dinnerTime,
     daily_headcount: submission.dailyHeadcount,

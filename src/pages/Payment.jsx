@@ -31,27 +31,6 @@ const DEFAULT_CONTENT = {
     },
   ],
   semesterFootnote: 'All meals include food, labor, and taxes. Meals are served 6 days a week (every day except Saturday).',
-  blockTitle: 'Meal Block Plans',
-  blockIntro: 'Looking for a shorter-term commitment? Choose a meal block and mix up lunch and dinner however you want.',
-  blockPlans: [
-    {
-      name: '80 Meal Block',
-      price: '$1,080',
-      period: '80 meals',
-      featured: false,
-      spotsLeft: '',
-      details: ['$13.50 per meal', 'Mix lunch and dinner however you want', '$300 deposit due at sign up', 'Balance due August 1st, 2026'],
-    },
-    {
-      name: '125 Meal Block',
-      price: '$1,375',
-      period: '125 meals',
-      featured: true,
-      spotsLeft: '',
-      details: ['$11.00 per meal', 'Mix lunch and dinner however you want', '$300 deposit due at sign up', 'Balance due August 1st, 2026'],
-    },
-  ],
-  blockFootnote: 'All meals include food, labor, and taxes.',
   paymentIntro: 'Payment can be sent via Venmo or Zelle. Please include your house name in the payment memo.',
   venmoHandle: '@bigpapapinky',
   venmoNote: 'Include your house name in the note.',
@@ -258,24 +237,6 @@ export default function Payment() {
             <input type="text" value={editContent.semesterFootnote} onChange={(e) => updateField('semesterFootnote', e.target.value)} />
           </div>
 
-          <h2 style={{ marginTop: '24px', marginBottom: '12px' }}>Block Plans</h2>
-          <div className="form-group">
-            <label>Section Title</label>
-            <input type="text" value={editContent.blockTitle} onChange={(e) => updateField('blockTitle', e.target.value)} />
-          </div>
-          <div className="form-group">
-            <label>Intro Text</label>
-            <textarea value={editContent.blockIntro} onChange={(e) => updateField('blockIntro', e.target.value)} rows={2} />
-          </div>
-          {editContent.blockPlans.map((plan, i) => (
-            <PlanEditor key={i} plan={plan} onChange={(p) => updatePlan('blockPlans', i, p)} onRemove={() => removePlan('blockPlans', i)} />
-          ))}
-          <button className="btn btn-secondary" onClick={() => addPlan('blockPlans')} style={{ marginBottom: '16px' }}>+ Add Block Plan</button>
-          <div className="form-group">
-            <label>Block Footnote</label>
-            <input type="text" value={editContent.blockFootnote} onChange={(e) => updateField('blockFootnote', e.target.value)} />
-          </div>
-
           <h2 style={{ marginTop: '24px', marginBottom: '12px' }}>Payment Methods</h2>
           <div className="form-group">
             <label>Payment Intro</label>
@@ -334,17 +295,6 @@ export default function Payment() {
           ))}
         </div>
         <p className="plan-footnote">{content.semesterFootnote}</p>
-      </section>
-
-      <section className="meal-plans-section">
-        <h2>{content.blockTitle}</h2>
-        <p className="block-plan-intro">{content.blockIntro}</p>
-        <div className="meal-plans">
-          {content.blockPlans.map((plan, i) => (
-            <PlanCard key={i} plan={plan} />
-          ))}
-        </div>
-        <p className="plan-footnote">{content.blockFootnote}</p>
       </section>
 
       <section className="payment-section">

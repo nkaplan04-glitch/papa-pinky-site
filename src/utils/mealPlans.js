@@ -23,22 +23,6 @@ export const PLANS = {
     cap: 55,
     type: 'block',
   },
-  block_80: {
-    id: 'block_80',
-    label: '80 Meal Block',
-    shortLabel: '80 Block',
-    meals: ['lunch', 'dinner'],
-    cap: 80,
-    type: 'block',
-  },
-  block_125: {
-    id: 'block_125',
-    label: '125 Meal Block',
-    shortLabel: '125 Block',
-    meals: ['lunch', 'dinner'],
-    cap: 125,
-    type: 'block',
-  },
 };
 
 export const DEFAULT_PLAN = 'ld_semester';
